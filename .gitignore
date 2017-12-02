@@ -4,3 +4,6 @@ moc_mainwindow.o
 untitled1
 Makefile
 client
+
+client.pro.user*
+*.run
