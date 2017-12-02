@@ -14,7 +14,7 @@ Clone repository
 
 Build
 ```
-qmake -makefile
+qmake -qt=qt4
 make
 ```
 
