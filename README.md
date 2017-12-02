@@ -3,9 +3,8 @@
 
 Install required libs:
 ```
-sudo apt-get install build-essential libgl1-mesa-dev
+sudo apt-get install  cmake gcc g++  build-essential libgl1-mesa-dev libxtst-dev build-essential libqt4-dev qt4-qmake
 
-apt install cmake gcc g++ qt4-qmake
 ```
 
 Clone repository
@@ -21,5 +20,5 @@ make
 
 Run
 ```
-./untitled1
+./client
 ```
