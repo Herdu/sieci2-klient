@@ -2,3 +2,4 @@ main.o
 mainwindow.o
 moc_mainwindow.o
 untitled1
+Makefile
