@@ -5,7 +5,7 @@ Install required libs:
 ```
 sudo apt-get install build-essential libgl1-mesa-dev
 
-apt install qt4-qmake
+apt install cmake gcc g++ qt4-qmake
 ```
 
 Clone repository
@@ -13,3 +13,13 @@ Clone repository
  git clone https://github.com/Herdu/sieci2-klient.git .
  ```
 
+Build
+```
+qmake -makefile
+make
+```
+
+Run
+```
+./untitled1
+```
