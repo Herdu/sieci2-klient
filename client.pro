@@ -7,7 +7,7 @@
 QT += core gui
 QT += widgets
 
-TARGET = untitled1
+TARGET = client
 TEMPLATE = app
 
 
