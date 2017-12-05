@@ -1,4 +1,3 @@
-#
 
 
 Install required libs:
@@ -12,6 +11,8 @@ Clone repository
  git clone https://github.com/Herdu/sieci2-klient.git .
  ```
 
+#Client side:
+
 Build
 ```
 cd client
@@ -22,4 +23,18 @@ make
 Run
 ```
 ./client
+```
+
+
+#Client side:
+
+Build
+```
+cd server
+make
+```
+
+Run
+```
+./server
 ```
