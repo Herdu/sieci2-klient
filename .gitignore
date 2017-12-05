@@ -1,9 +1,14 @@
-main.o
-mainwindow.o
-moc_mainwindow.o
-untitled1
-Makefile
-client
+client/main.o
+client/mainwindow.o
+client/moc_mainwindow.o
+client/untitled1
+client/Makefile
 
-client.pro.user*
-*.run
+
+client/client.pro.user*
+client/*.run
+
+server/server
+
+.idea
+cmake-build-debug

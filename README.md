@@ -1,4 +1,4 @@
-# sieci2-klient
+#
 
 
 Install required libs:
@@ -14,6 +14,7 @@ Clone repository
 
 Build
 ```
+cd client
 qmake -qt=qt4
 make
 ```
