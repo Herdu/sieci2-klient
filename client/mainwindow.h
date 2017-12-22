@@ -18,6 +18,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QObjectList letterButtons;
+
+private slots:
+    void letterPressed();
+    void letterSelected();
+
 };
 
 #endif // MAINWINDOW_H
