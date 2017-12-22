@@ -50,11 +50,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::letterPressed()
 {
-    //remove active class from all letter buttons
-    for(int i=0; i < this->letterButtons.length(); i++){
-        QPushButton* button = qobject_cast<QPushButton*>(this->letterButtons[i]);
-        button->setProperty( "class", QString::fromStdString(""));
-    }
+    this->resetKeyboard();
 
     QPushButton* button = qobject_cast<QPushButton*>(sender()); //return a pointer to button that emitted event
     ui->label_player_name->setText(button->text());
@@ -75,6 +71,19 @@ void MainWindow::letterSelected()
         }
     }
 
-    qDebug() << letter;
+    this->resetKeyboard();
 
+    qDebug() << letter;
+}
+
+void MainWindow::resetKeyboard()
+{
+    //remove active class from all letter buttons
+    for(int i=0; i < this->letterButtons.length(); i++){
+        QPushButton* button = qobject_cast<QPushButton*>(this->letterButtons[i]);
+        button->setProperty( "class", QString::fromStdString(""));
+    }
+
+    QWidget* container = ui->letter_buttons_container;
+    container->setStyleSheet(container->styleSheet());
 }

@@ -441,7 +441,7 @@
       <string>E</string>
      </property>
      <property name="class" stdset="0">
-      <string>active</string>
+      <string/>
      </property>
     </widget>
    </widget>

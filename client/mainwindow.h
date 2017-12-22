@@ -19,6 +19,7 @@ public:
 private:
     Ui::MainWindow *ui;
     QObjectList letterButtons;
+    void resetKeyboard();
 
 private slots:
     void letterPressed();

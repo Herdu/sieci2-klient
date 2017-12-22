@@ -221,7 +221,7 @@ public:
         pushButton_letter_v->setText(QApplication::translate("MainWindow", "V", 0, QApplication::UnicodeUTF8));
         pushButton_letter_j->setText(QApplication::translate("MainWindow", "J", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setText(QApplication::translate("MainWindow", "E", 0, QApplication::UnicodeUTF8));
-        pushButton_letter_e->setProperty("class", QVariant(QApplication::translate("MainWindow", "active", 0, QApplication::UnicodeUTF8)));
+        pushButton_letter_e->setProperty("class", QVariant(QString()));
     } // retranslateUi
 
 };
