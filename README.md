@@ -1,4 +1,4 @@
-
+# Hangman game
 
 Install required libs:
 ```
@@ -11,7 +11,7 @@ Clone repository
  git clone https://github.com/Herdu/sieci2-klient.git .
  ```
 
-#Client side:
+### Server side:
 
 Build
 ```
@@ -26,7 +26,7 @@ Run
 ```
 
 
-#Client side:
+### Client side:
 
 Build
 ```
