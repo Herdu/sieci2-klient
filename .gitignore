@@ -9,6 +9,8 @@ client/client.pro.user*
 client/*.run
 
 server/server
-
+server/*.out
+server/main
+server/*.o
 .idea
 cmake-build-debug
