@@ -1,6 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <qdebug.h>
+#include <unistd.h>
+
+
+QByteArray IntToArray(qint32 source) //Use qint32 to ensure that the number have 4 bytes
+{
+    //Avoid use of cast, this is the Qt way to serialize objects
+    QByteArray temp;
+    QDataStream data(&temp, QIODevice::ReadWrite);
+    data << source;
+    return temp;
+}
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -71,6 +83,8 @@ void MainWindow::letterSelected()
         }
     }
 
+    this->writeData(LETTER_VOTE, letter);
+
     this->resetKeyboard();
 
     qDebug() << letter;
@@ -87,3 +101,90 @@ void MainWindow::resetKeyboard()
     QWidget* container = ui->letter_buttons_container;
     container->setStyleSheet(container->styleSheet());
 }
+
+
+bool MainWindow::connectTcp (QString address, QString port, QString nick)
+{
+    //convert port to quint16
+    QTextStream ts(&port);
+    quint16 num = 0;
+    ts >> num;
+
+    QHostAddress _address(address);
+    quint16 _port(num);
+
+    QByteArray data; // <-- fill with data
+    this->pSocket = new QTcpSocket( this );
+    connect( this->pSocket, SIGNAL(readyRead()), SLOT(readTcpData()));
+    qDebug() << "przed polaczeniem";
+
+    this->pSocket->connectToHost(_address, _port);
+
+
+        if(this->pSocket->waitForConnected(3000))
+        {
+            qDebug() << "Connected!";
+            sleep(1);
+            qDebug() << "Nickname sent: "<< this->writeData(SET_NICKNAME, nick);
+
+            return true;
+
+        }
+        else
+        {
+            qDebug() << "Not connected!";
+            return false;
+        }
+
+
+}
+
+void MainWindow::readTcpData()
+{
+    QByteArray data = this->pSocket->readAll();
+    qDebug() << data;
+}
+
+bool MainWindow::writeData(COMMAND command, QString data)
+{
+    if(this->pSocket->state() == QAbstractSocket::ConnectedState)
+    {
+
+        QString temp, com;
+
+
+        switch(command){
+            case SET_NICKNAME:
+                    com += "SET_NICKNAME:";
+                break;
+
+            case LETTER_VOTE:
+                    com+= "LETTER_VOTE:";
+                break;
+
+            case PASSWORD_GUESS:
+                    com+= "PASSWORD_GUESS:";
+                break;
+
+            default:
+                qDebug() << "wrong command" <<endl;
+                return false;
+        }
+
+
+        temp =  com + data + "\0";
+
+        QByteArray _data = temp.toUtf8();
+
+
+        //this->pSocket->write(IntToArray(_data.size())); //write size of data
+        //this->pSocket->write(IntToArray(255)); //write size of data
+        this->pSocket->write(_data); //write the data itself
+        return this->pSocket->waitForBytesWritten();
+    }
+    else
+        return false;
+}
+
+
+

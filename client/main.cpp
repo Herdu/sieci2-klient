@@ -1,29 +1,32 @@
 #include "mainwindow.h"
-#include "game.h"
+#include "commands.h"
 #include <QApplication>
+#include <cstdlib>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <errno.h>
+#include <error.h>
+#include <netdb.h>
+#include <sys/epoll.h>
+
+
 
 int main(int argc, char *argv[])
 {
 
-    string nick = "Albert Einstein";
-    string port = "13";
-    string address = "127.0.0.1";
-    Game game(nick);
-
-    bool connectionResult = game.connection(address, port);
+    QString nick = "Albert Einstein";
+    QString port = "12345";
+    QString address = "127.0.0.1";
 
 
-    if(!connectionResult){
-        cout << "Couldn't connect to " << address << ":" << port << endl;
-        exit(1);
-    }else{
-        cout << "Connected to " << address << ":" << port << endl;
-        QApplication a(argc, argv);
-        MainWindow w;
-        w.show();
-        return a.exec();
+    QApplication a(argc, argv);
+    MainWindow window;
+    if(window.connectTcp(address,port, nick)){
+        window.show();
     }
-
-
-
+    else{
+        cout <<"couldn't connect to the server" <<endl;
+    }
+    return a.exec();
 }

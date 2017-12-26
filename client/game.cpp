@@ -10,6 +10,6 @@ Game::Game(string nick)
 
 
 bool Game::connection(string address, string port){
-    return true;
+    return false;
 }
 
