@@ -104,17 +104,18 @@ bool MainWindow::connectTcp (QString address, QString port, QString nick)
 
     QByteArray data; // <-- fill with data
     this->pSocket = new QTcpSocket( this );
-    connect( this->pSocket, SIGNAL(readyRead()), SLOT(readTcpData()));
-    qDebug() << "przed polaczeniem";
+    connect(this->pSocket, SIGNAL(disconnected()),this, SLOT(disconnected()));
+    connect(this->pSocket, SIGNAL(readyRead()),this, SLOT(readyRead()));
+
 
     this->pSocket->connectToHost(_address, _port);
 
 
         if(this->pSocket->waitForConnected(3000))
         {
-            qDebug() << "Connected!";
+            qDebug() << "Connected to server";
             sleep(1);
-            qDebug() << "Nickname sent: "<< this->writeData(SET_NICKNAME, nick);
+            this->writeData(SET_NICKNAME, nick);
 
             return true;
 
@@ -139,30 +140,10 @@ bool MainWindow::writeData(COMMAND command, QString data)
     if(this->pSocket->state() == QAbstractSocket::ConnectedState)
     {
 
-        QString temp, com;
+        QString temp;
 
-
-        switch(command){
-            case SET_NICKNAME:
-                    com += "SET_NICKNAME:";
-                break;
-
-            case LETTER_VOTE:
-                    com+= "LETTER_VOTE:";
-                break;
-
-            case PASSWORD_GUESS:
-                    com+= "PASSWORD_GUESS:";
-                break;
-
-            default:
-                qDebug() << "wrong command" <<endl;
-                return false;
-        }
-
-
-        temp =  com + data + "\0";
-
+        temp =  QString::fromStdString(to_string(command) + ":") + data + ";";
+        qDebug() << temp;
         QByteArray _data = temp.toUtf8();
 
 
@@ -173,6 +154,72 @@ bool MainWindow::writeData(COMMAND command, QString data)
     }
     else
         return false;
+}
+
+
+void MainWindow::disconnected()
+{
+    qDebug() << "disconnected...";
+}
+
+void MainWindow::readyRead()
+{
+    qDebug() << "reading message from server";
+
+    QString message;
+
+    message = this->pSocket->readAll();
+
+    QStringList splitted = message.split(";");
+
+    for(int i=0; i<splitted.length(); i++){
+
+        if(splitted[i] != ""){
+            QStringList splitted2 = splitted[i].split(":");
+
+            int len =  splitted2.length();
+
+            int command;
+            QString argument;
+
+            if(len > 0){
+                command = splitted2[0].toInt();
+            }
+
+            if(len > 1){
+                argument = splitted2[1];
+            }
+
+            if(argument == ""){
+                this->processMessage(command);
+            }else{
+                this->processMessage(command, argument);
+            }
+        }
+
+    }
+
+}
+
+void MainWindow::processMessage(int command){
+    auto cmd = static_cast<COMMAND>(command);
+
+    switch(cmd){
+    case END_OF_ROUND:
+            qDebug() << "End of round";
+        break;
+    default:
+
+            qDebug() << "Unknown command";
+        break;
+    }
+
+
+
+
+}
+void MainWindow::processMessage(int command, QString argument){
+
 }
 
 

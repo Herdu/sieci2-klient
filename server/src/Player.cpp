@@ -14,3 +14,29 @@ Player::Player(int fd) {
 }
 
 
+
+
+bool Player::writeData(string message) {
+
+    ssize_t count = message.length();
+    char buffer[1024];
+    strcpy(buffer, message.c_str());
+
+    auto ret = write(this->fd, buffer, count);
+
+    if(ret==-1) {
+        error(1, errno, "write failed on descriptor %d", fd);
+    }
+    if(ret!=count) {
+        error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
+    }
+
+    return ret;
+}
+
+bool Player::writeData(COMMAND command){
+    this->writeData(to_string(command) + ";");
+}
+
+
+

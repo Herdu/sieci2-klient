@@ -5,7 +5,7 @@
 #include "Game.h"
 #include <vector>
 
-
+using namespace std;
 
 
 Game::Game(){
@@ -82,7 +82,42 @@ void Game::processMessage(int clientFd){
         this->removePlayer(clientFd);
     } else {
         // broadcast the message
-        this->sendToAll(clientFd, buffer, count);
+
+
+        //this->sendToAll(clientFd, buffer, count);
+
+
+
+
+        char* command_array = strtok(buffer, ";");
+        while(command_array)
+        {
+            int command_index;
+            string command_argument;
+            int i = 0;
+
+            char* single_cmd_array = strtok(command_array, ":");
+
+            while(single_cmd_array){
+
+                if(i==0){
+                    sscanf(single_cmd_array, "%d", &command_index);
+                }else if(i==1){
+                    command_argument = string(single_cmd_array);
+                }else{
+                    break;
+                }
+                i++;
+                single_cmd_array = strtok(NULL, ":");
+            }
+
+            this->processCommand(command_index, command_argument);
+
+
+            command_array = strtok(NULL, ";");
+        }
+
+
     }
 
 
@@ -190,8 +225,34 @@ void Game::setGameInterval(int epollHandler, int length){
         cout<<"epoll_ctl error"<<endl;
 }
 
+
 void Game::processTimeInterval() {
     uint64_t value;
     read(this->timeFd, &value, 8);
     cout<<"[GAME] " << this->intervalLength << "secs have passed. End of round."<<endl;
+
+
+    for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
+        it->writeData(END_OF_ROUND);
+    }
+}
+
+
+void Game::processCommand(int command, string argument) {
+
+    COMMAND cmd = static_cast<COMMAND>(command);
+
+    switch (cmd){
+        case SET_NICKNAME:
+            cout << "change nick" << endl;
+            break;
+        case LETTER_VOTE:
+            cout << "vote for letter" << endl;
+            break;
+        default:
+            cout << "[SERVER] Unknown command from player";
+            break;
+    }
+
+
 }

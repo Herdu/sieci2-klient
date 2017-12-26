@@ -25,9 +25,12 @@
 #include <strings.h>
 #include <string.h>
 #include <vector>
+#include <iostream>
+#include <string>
 
 
 #include "Player.h"
+#include "commands.h"
 
 using namespace std;
 
@@ -43,6 +46,8 @@ private:
 
     void removePlayer(int fd);
     void sendToAll(int fd, char buffer[], int count);
+
+    void processCommand(int command, string argument);
 
     //init stuff
     void setReuseAddr();

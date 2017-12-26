@@ -30,11 +30,16 @@ private:
     QObjectList letterButtons;
     void resetKeyboard();
 
+    void processMessage(int command);
+    void processMessage(int command, QString argument);
+
 
 private slots:
     void letterPressed();
     void letterSelected();
     void readTcpData();
+    void readyRead();
+    void disconnected();
     bool writeData(COMMAND command, QString data);
 };
 

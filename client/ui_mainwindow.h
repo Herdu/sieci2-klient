@@ -56,7 +56,6 @@ public:
     QPushButton *pushButton_letter_v;
     QPushButton *pushButton_letter_j;
     QPushButton *pushButton_letter_e;
-    QPushButton *pushButton;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -174,9 +173,6 @@ public:
         pushButton_letter_e = new QPushButton(letter_buttons_container);
         pushButton_letter_e->setObjectName(QString::fromUtf8("pushButton_letter_e"));
         pushButton_letter_e->setGeometry(QRect(230, 10, 40, 40));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(700, 160, 99, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -221,7 +217,6 @@ public:
         pushButton_letter_j->setText(QApplication::translate("MainWindow", "J", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setText(QApplication::translate("MainWindow", "E", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setProperty("class", QVariant(QString()));
-        pushButton->setText(QApplication::translate("MainWindow", "PushButton", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
