@@ -8,5 +8,5 @@ using namespace std;
 
 
 GameTime::GameTime() {
-    cout << "test" << endl;
+    cout << "gametime created" << endl;
 }
