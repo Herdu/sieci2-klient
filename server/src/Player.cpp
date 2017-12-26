@@ -7,6 +7,12 @@ using namespace std;
 #include "Player.h"
 
 
-Player::Player() {
-    cout << "player created" << endl;
+Player::Player(int fd) {
+    this->name = "Anonymous";
+    this->points = 0;
+    this->fd = fd;
+
+    cout << "[SERVER] Created player with fd = " << fd <<endl;
 }
+
+

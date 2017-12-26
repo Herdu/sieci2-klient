@@ -11,13 +11,15 @@
 using namespace std;
 
 class Player{
-
-
+    string name;
+    int fd;
+    int points;
 private:
 
 
 public:
-    Player();
+    void setName(string name){this->name = name;};
+    Player(int fd);
 
 };
 

@@ -23,8 +23,6 @@
 
 using namespace std;
 
-GameTime gameTime;
-
 // server socket
 int servFd;
 
@@ -55,11 +53,13 @@ void acceptConnection(int epollHandler){
     // add client to all clients set
     clientFds.insert(clientFd);
 
+
+
     // tell who has connected
     printf("new connection from: %s:%hu (fd: %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
 
     epoll_event event;
-    event.events = EPOLLIN;
+    event.events = EPOLLIN || EPOLLET;
     event.data.fd = clientFd;
 
     epoll_ctl(epollHandler, EPOLL_CTL_ADD, clientFd, &event);
@@ -69,7 +69,6 @@ void sendMessage(int clientFd){
     // read a message
     char buffer[255];
     int count = read(clientFd, buffer, 255);
-
     if(count < 1) {
         printf("removing %d\n", clientFd);
         clientFds.erase(clientFd);
@@ -96,7 +95,10 @@ int main(int argc, char ** argv){
     bzero(&newValue,sizeof(newValue));
     bzero(&oldValue,sizeof(oldValue));
     struct timespec ts;
-    ts.tv_sec = 5;
+
+    int czas = 15;
+
+    ts.tv_sec = czas;
     ts.tv_nsec = 0;
     //both interval and value have been set
     newValue.it_value = ts;
@@ -161,14 +163,14 @@ int main(int argc, char ** argv){
             acceptConnection(epollHandler);
         }
 
-        if( event.events == EPOLLIN && event.data.fd != servFd && event.data.fd != tfd){
+        if( (event.events == EPOLLIN) && event.data.fd != servFd && event.data.fd != tfd){
             sendMessage(event.data.fd);
         }
 
-        if( event.events == EPOLLIN && event.data.fd == tfd){
+        if( event.events == EPOLLIN  && event.data.fd == tfd){
             uint64_t value;
             read(tfd, &value, 8);
-            cout<<value<<endl;
+            cout<<"minelo "<<czas << " sekund."<<endl;
         }
 
     }
@@ -195,7 +197,14 @@ void ctrl_c(int){
     exit(0);
 }
 
-void sendToAllBut(int fd, char * buffer, int count){
+void sendToAllBut(int fd, char buffer[], int count){
+    printf("Player with fd=%d sent: ",fd);
+    for (int i=0; i<count; i++){
+        printf("%c", buffer[i]);
+    }
+    printf("\n");
+
+
     int res;
     decltype(clientFds) bad;
     for(int clientFd : clientFds){
