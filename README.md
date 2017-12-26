@@ -11,11 +11,14 @@ Clone repository
  git clone https://github.com/Herdu/sieci2-klient.git .
  ```
 
-### Server side:
+### Client side:
+
+```
+cd client
+```
 
 Build
 ```
-cd client
 qmake -qt=qt4
 make
 ```
@@ -26,11 +29,15 @@ Run
 ```
 
 
-### Client side:
+### Server side:
+
+```
+cd server
+
+```
 
 Build
 ```
-cd server
 make
 ```
 
