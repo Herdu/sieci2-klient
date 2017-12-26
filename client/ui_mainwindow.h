@@ -28,7 +28,6 @@ public:
     QWidget *centralWidget;
     QLabel *label_player_name;
     QLabel *label_2;
-    QPushButton *pushButton;
     QPushButton *pushButton_select_letter;
     QWidget *letter_buttons_container;
     QPushButton *pushButton_letter_z;
@@ -57,6 +56,7 @@ public:
     QPushButton *pushButton_letter_v;
     QPushButton *pushButton_letter_j;
     QPushButton *pushButton_letter_e;
+    QPushButton *pushButton;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -79,9 +79,6 @@ public:
         label_2 = new QLabel(centralWidget);
         label_2->setObjectName(QString::fromUtf8("label_2"));
         label_2->setGeometry(QRect(150, 60, 67, 17));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(760, 40, 99, 27));
         pushButton_select_letter = new QPushButton(centralWidget);
         pushButton_select_letter->setObjectName(QString::fromUtf8("pushButton_select_letter"));
         pushButton_select_letter->setGeometry(QRect(130, 400, 221, 31));
@@ -177,6 +174,9 @@ public:
         pushButton_letter_e = new QPushButton(letter_buttons_container);
         pushButton_letter_e->setObjectName(QString::fromUtf8("pushButton_letter_e"));
         pushButton_letter_e->setGeometry(QRect(230, 10, 40, 40));
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pushButton->setGeometry(QRect(700, 160, 99, 27));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -193,7 +193,6 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
         label_player_name->setText(QApplication::translate("MainWindow", "Player name", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("MainWindow", "label2", 0, QApplication::UnicodeUTF8));
-        pushButton->setText(QApplication::translate("MainWindow", "Po\305\202\304\205cz si\304\231", 0, QApplication::UnicodeUTF8));
         pushButton_select_letter->setText(QApplication::translate("MainWindow", "Wybierz", 0, QApplication::UnicodeUTF8));
         pushButton_letter_z->setText(QApplication::translate("MainWindow", "Z", 0, QApplication::UnicodeUTF8));
         pushButton_letter_n->setText(QApplication::translate("MainWindow", "N", 0, QApplication::UnicodeUTF8));
@@ -222,6 +221,7 @@ public:
         pushButton_letter_j->setText(QApplication::translate("MainWindow", "J", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setText(QApplication::translate("MainWindow", "E", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setProperty("class", QVariant(QString()));
+        pushButton->setText(QApplication::translate("MainWindow", "PushButton", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
