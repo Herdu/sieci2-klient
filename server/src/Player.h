@@ -36,6 +36,7 @@ public:
     bool writeData(string message);
     bool writeData(COMMAND command);
     bool writeData(COMMAND command, string message);
+    bool writeData(string message, COMMAND command);
 };
 
 

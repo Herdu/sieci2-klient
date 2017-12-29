@@ -1,27 +1,20 @@
 #ifndef GAME_H
 #define GAME_H
+#include <QApplication>
+#include <QMainWindow>
+#include <qdebug.h>
 
-#include <iostream>
-#include <QString>
-#include <QStringList>
-#include <QObject>
-#include <QTcpSocket>
-#include <QPointer>
-#include <QAuthenticator>
-#include <QSslSocket>
-
-using namespace std;
-
-
-class Game : QTcpSocket
+class Game
 {
-public:
-    Game(string nick);
-    bool connection(string address, string port);
-
-
 private:
-    QTcpSocket *tcpSocket = nullptr;
+    QString currentPassword;
+    QString currentMask;
+
+public:
+    Game();
+    void setNewPassword(QString password);
+    QString getMask() { return this->currentMask; }
+    QString getPassword();
 };
 
 #endif // GAME_H

@@ -27,7 +27,6 @@ class Ui_MainWindow
 public:
     QWidget *centralWidget;
     QLabel *label_player_name;
-    QLabel *label_2;
     QPushButton *pushButton_select_letter;
     QWidget *letter_buttons_container;
     QPushButton *pushButton_letter_z;
@@ -56,6 +55,7 @@ public:
     QPushButton *pushButton_letter_v;
     QPushButton *pushButton_letter_j;
     QPushButton *pushButton_letter_e;
+    QLabel *label_password;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -74,10 +74,7 @@ public:
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         label_player_name = new QLabel(centralWidget);
         label_player_name->setObjectName(QString::fromUtf8("label_player_name"));
-        label_player_name->setGeometry(QRect(370, 10, 131, 21));
-        label_2 = new QLabel(centralWidget);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setGeometry(QRect(150, 60, 67, 17));
+        label_player_name->setGeometry(QRect(690, 380, 131, 21));
         pushButton_select_letter = new QPushButton(centralWidget);
         pushButton_select_letter->setObjectName(QString::fromUtf8("pushButton_select_letter"));
         pushButton_select_letter->setGeometry(QRect(130, 400, 221, 31));
@@ -173,6 +170,14 @@ public:
         pushButton_letter_e = new QPushButton(letter_buttons_container);
         pushButton_letter_e->setObjectName(QString::fromUtf8("pushButton_letter_e"));
         pushButton_letter_e->setGeometry(QRect(230, 10, 40, 40));
+        label_password = new QLabel(centralWidget);
+        label_password->setObjectName(QString::fromUtf8("label_password"));
+        label_password->setGeometry(QRect(30, 0, 901, 101));
+        QFont font;
+        font.setPointSize(28);
+        label_password->setFont(font);
+        label_password->setStyleSheet(QString::fromUtf8(""));
+        label_password->setAlignment(Qt::AlignCenter);
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -188,7 +193,6 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
         label_player_name->setText(QApplication::translate("MainWindow", "Player name", 0, QApplication::UnicodeUTF8));
-        label_2->setText(QApplication::translate("MainWindow", "label2", 0, QApplication::UnicodeUTF8));
         pushButton_select_letter->setText(QApplication::translate("MainWindow", "Wybierz", 0, QApplication::UnicodeUTF8));
         pushButton_letter_z->setText(QApplication::translate("MainWindow", "Z", 0, QApplication::UnicodeUTF8));
         pushButton_letter_n->setText(QApplication::translate("MainWindow", "N", 0, QApplication::UnicodeUTF8));
@@ -217,6 +221,7 @@ public:
         pushButton_letter_j->setText(QApplication::translate("MainWindow", "J", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setText(QApplication::translate("MainWindow", "E", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setProperty("class", QVariant(QString()));
+        label_password->setText(QApplication::translate("MainWindow", "test madafucka", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

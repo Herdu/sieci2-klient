@@ -160,6 +160,7 @@ bool MainWindow::writeData(COMMAND command, QString data)
 void MainWindow::disconnected()
 {
     qDebug() << "disconnected...";
+    exit(1);
 }
 
 void MainWindow::readyRead()
@@ -219,7 +220,29 @@ void MainWindow::processMessage(int command){
 
 }
 void MainWindow::processMessage(int command, QString argument){
+    auto cmd = static_cast<COMMAND>(command);
 
+    switch(cmd){
+    case NEW_PASSWORD:
+            qDebug() << "NEW PASSWORD: ";
+            this->game.setNewPassword(argument);
+            this->prepareNewGame();
+        break;
+    default:
+
+            qDebug() << "Unknown command: "<< cmd << " : " << argument;
+        break;
+    }
+
+}
+
+void MainWindow::prepareNewGame(){
+   this->ui->label_password->setText(this->game.getPassword());
+
+}
+
+
+void MainWindow::init(){
 }
 
 

@@ -32,27 +32,14 @@
    <widget class="QLabel" name="label_player_name">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>10</y>
+      <x>690</x>
+      <y>380</y>
       <width>131</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
      <string>Player name</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>60</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>label2</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_select_letter">
@@ -431,6 +418,30 @@
       <string/>
      </property>
     </widget>
+   </widget>
+   <widget class="QLabel" name="label_password">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>0</y>
+      <width>901</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>28</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>test madafucka</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

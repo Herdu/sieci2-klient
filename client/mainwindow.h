@@ -7,7 +7,7 @@
 #include <QHostAddress>
 
 #include "commands.h"
-
+#include "game.h"
 
 using namespace std;
 
@@ -22,6 +22,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     bool connectTcp(QString address, QString port, QString nick);
+    void init();
     ~MainWindow();
 
 private:
@@ -29,9 +30,11 @@ private:
     QTcpSocket * pSocket;
     QObjectList letterButtons;
     void resetKeyboard();
+    Game game;
 
     void processMessage(int command);
     void processMessage(int command, QString argument);
+    void prepareNewGame();
 
 
 private slots:

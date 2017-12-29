@@ -38,6 +38,9 @@ using namespace std;
 class Game{
 
 private:
+    string currentPassword;
+    string currentMask;
+
     int fd; //server socket id
     int timeFd; //time id
     COMMAND timeoutCommand;
@@ -47,7 +50,7 @@ private:
     vector<Player> player;
 
     void removePlayer(int fd);
-    void sendToAll(int fd, char buffer[], int count);
+    void sendToAll(COMMAND command, string argument);
 
     void processCommand(int clientFd, int command, string argument);
 
@@ -66,6 +69,8 @@ public:
 
     void processGameTimeout();
     void getDictionaryFromFile(string filename);
+
+    void start();
 
     Game();
 

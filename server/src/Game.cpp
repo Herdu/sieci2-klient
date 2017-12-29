@@ -81,13 +81,6 @@ void Game::processMessage(int clientFd){
     if(count < 1) {
         this->removePlayer(clientFd);
     } else {
-        // broadcast the message
-
-
-        //this->sendToAll(clientFd, buffer, count);
-
-
-
 
         char* command_array = strtok(buffer, ";");
         while(command_array)
@@ -125,29 +118,10 @@ void Game::processMessage(int clientFd){
 }
 
 
-void Game::sendToAll(int fd, char buffer[], int count){
-
-    printf("[PLAYER fd=%d] sent: ",fd);
-    for (int i=0; i<count; i++){
-        printf("%c", buffer[i]);
+void Game::sendToAll(COMMAND command, string argument){
+    for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
+        it->writeData(command, argument);
     }
-    printf("\n");
-
-    /*
-    int res;
-    decltype(clientFds) bad;
-    for(int clientFd : clientFds){
-        if(clientFd == fd) continue;
-        res = write(clientFd, buffer, count);
-        if(res!=count)
-            bad.insert(clientFd);
-    }
-    for(int clientFd : bad){
-        printf("removing %d\n", clientFd);
-        clientFds.erase(clientFd);
-        close(clientFd);
-    }
-     */
 }
 
 
@@ -206,9 +180,6 @@ void Game::initTimeout(int epollHandler){
 
     if( epoll_ctl(epollHandler,EPOLL_CTL_ADD,this->timeFd,&event) < 0)
         cout<<"epoll_ctl error"<<endl;
-
-
-    this->setGameTimeout(5,END_OF_ROUND);
 }
 
 
@@ -221,10 +192,13 @@ void Game::processGameTimeout() {
     switch(this->timeoutCommand){
         case END_OF_ROUND:
             cout << "[TIMEOUT] End of round." << endl;
-            for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
-                it->writeData(END_OF_ROUND);
-            }
+
             this->setGameTimeout(20, LETTER_VOTE);
+            break;
+
+        case NEW_PASSWORD:
+            cout<< "[GAME] setting new password" <<endl;
+            this->start();
             break;
         default:
             cout << "[TIMEOUT] No matching command" << endl;
@@ -293,5 +267,19 @@ void Game::setGameTimeout(int length, COMMAND command) {
 
     this->timeoutCommand = command;
     this->timeoutLength = length;
+
+}
+
+
+void Game::start(){
+    int temp = rand() % this->dictionary.size();
+
+
+    currentPassword = dictionary[temp];
+
+    this->sendToAll(NEW_PASSWORD, currentPassword);
+
+
+    this->setGameTimeout(5,NEW_PASSWORD);
 
 }

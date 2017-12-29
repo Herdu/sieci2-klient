@@ -35,7 +35,15 @@ bool Player::writeData(string message) {
 }
 
 bool Player::writeData(COMMAND command){
-    this->writeData(to_string(command) + ";");
+    return this->writeData(to_string(command) + ";");
+}
+
+bool Player::writeData(COMMAND command, string argument){
+    return this->writeData( to_string(command) + ":" + argument +";");
+}
+
+bool Player::writeData(string argument, COMMAND command){
+    return this->writeData(command, argument);
 }
 
 

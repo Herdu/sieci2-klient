@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow window;
     if(window.connectTcp(address,port, nick)){
+        window.init();
         window.show();
     }
     else{

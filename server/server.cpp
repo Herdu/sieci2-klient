@@ -47,6 +47,8 @@ int main(int argc, char ** argv){
 
     epoll_event event;
 
+    game.start();
+
     while((resultCount = epoll_wait(epollHandler, &event, 1, -1)) != -1){
 
         if(event.events == EPOLLIN){
