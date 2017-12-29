@@ -30,6 +30,7 @@ private:
     QTcpSocket * pSocket;
     QObjectList letterButtons;
     void resetKeyboard();
+    void drawImage();
     Game game;
 
     void processMessage(int command);

@@ -2,7 +2,7 @@
 
 Game::Game()
 {
-
+    this->numberOfPieces = 0;
 }
 
 

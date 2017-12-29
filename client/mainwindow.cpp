@@ -54,8 +54,7 @@ void MainWindow::letterPressed()
     this->resetKeyboard();
 
     QPushButton* button = qobject_cast<QPushButton*>(sender()); //return a pointer to button that emitted event
-    ui->label_player_name->setText(button->text());
-    button->setProperty("class", "active");
+   button->setProperty("class", "active");
 
     QWidget* container = ui->letter_buttons_container;
     container->setStyleSheet(container->styleSheet());
@@ -242,6 +241,8 @@ void MainWindow::processMessage(int command, QString argument){
 
     case NEXT_TOUR:
        qDebug() << "NEXT TOUR ";
+       this->game.addPiece();
+       this->drawImage();
         break;
 
     default:
@@ -260,6 +261,20 @@ void MainWindow::prepareNewGame(){
 
 void MainWindow::init(){
     this->writeData(GET_PASSWORD, nullptr);
+    this->drawImage();
+}
+
+void MainWindow::drawImage(){
+
+    int num = this->game.getNumberOfPieces();
+    QString url = "files/";
+    url += QString::number(num);
+    url += ".jpg";
+
+
+    QPixmap img(url);
+    this->ui->label_image->clear();
+    this->ui->label_image->setPixmap(img);
 }
 
 

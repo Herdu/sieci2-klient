@@ -29,24 +29,11 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="label_player_name">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>380</y>
-      <width>131</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Player name</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_select_letter">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>400</y>
+      <x>290</x>
+      <y>430</y>
       <width>221</width>
       <height>31</height>
      </rect>
@@ -58,8 +45,8 @@
    <widget class="QWidget" name="letter_buttons_container" native="true">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>160</y>
+      <x>100</x>
+      <y>170</y>
       <width>451</width>
       <height>211</height>
      </rect>
@@ -422,10 +409,10 @@
    <widget class="QLabel" name="label_password">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>0</x>
       <y>0</y>
-      <width>901</width>
-      <height>101</height>
+      <width>661</width>
+      <height>141</height>
      </rect>
     </property>
     <property name="font">
@@ -437,7 +424,31 @@
      <string notr="true"/>
     </property>
     <property name="text">
-     <string>test madafucka</string>
+     <string>Miejsce na hasło</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_image">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>0</y>
+      <width>301</width>
+      <height>521</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>28</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>image</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
