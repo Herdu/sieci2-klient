@@ -207,6 +207,7 @@ void Game::processGameTimeout() {
             cout << "[TIMEOUT] End of round." << endl;
             this->timeoutCommand = NOTHING;
             //TODO PRZELICZENIE GLOSOW
+            this->sendToAll(END_OF_ROUND," ");
             break;
 
         case NEW_PASSWORD:
@@ -215,6 +216,7 @@ void Game::processGameTimeout() {
             break;
         case NEXT_TOUR:
             cout<<"[GAME] next tour" << endl;
+            this->sendToAll(NEXT_TOUR, " ");
             break;
 
         default:
@@ -294,6 +296,7 @@ void Game::setGameTimeout(int length, COMMAND command) {
 
 void Game::start(){
     //Begin of round
+    this->numberOfPieces = 0;
 
     //prepare password and mask
     int temp = rand() % this->dictionary.size();

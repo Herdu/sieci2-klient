@@ -48,6 +48,7 @@ private:
     uint16_t port;
     vector<string> dictionary;
     vector<Player> player;
+    int numberOfPieces;
 
     void removePlayer(int fd);
     void sendToAll(COMMAND command, string argument);

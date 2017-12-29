@@ -239,6 +239,11 @@ void MainWindow::processMessage(int command, QString argument){
         this->game.setMask(argument);
         this->ui->label_password->setText(this->game.getPassword());
         break;
+
+    case NEXT_TOUR:
+       qDebug() << "NEXT TOUR ";
+        break;
+
     default:
 
             qDebug() << "Unknown command: "<< cmd << " : " << argument;
