@@ -27,7 +27,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
-
+#include <iostream>
+#include <fstream>
 
 #include "Player.h"
 #include "commands.h"
@@ -39,15 +40,16 @@ class Game{
 private:
     int fd; //server socket id
     int timeFd; //time id
-    int intervalLength;
+    COMMAND timeoutCommand;
+    int timeoutLength;
     uint16_t port;
-
+    vector<string> dictionary;
     vector<Player> player;
 
     void removePlayer(int fd);
     void sendToAll(int fd, char buffer[], int count);
 
-    void processCommand(int command, string argument);
+    void processCommand(int clientFd, int command, string argument);
 
     //init stuff
     void setReuseAddr();
@@ -59,8 +61,12 @@ public:
     void processMessage(int fd);
     void acceptConnection(int epollHandler);
     void assignToEpoll(int epollHandler);
-    void setGameInterval(int epollHandler, int length);
-    void processTimeInterval();
+    void initTimeout(int epollHandler);
+    void setGameTimeout(int length, COMMAND command);
+
+    void processGameTimeout();
+    void getDictionaryFromFile(string filename);
+
     Game();
 
 };

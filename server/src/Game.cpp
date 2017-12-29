@@ -111,7 +111,7 @@ void Game::processMessage(int clientFd){
                 single_cmd_array = strtok(NULL, ":");
             }
 
-            this->processCommand(command_index, command_argument);
+            this->processCommand(clientFd, command_index, command_argument);
 
 
             command_array = strtok(NULL, ";");
@@ -177,7 +177,9 @@ void Game::acceptConnection(int epollHandler){
 void Game::setReuseAddr(){
     const int one = 1;
     int res = setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
-    if(res) error(1,errno, "setsockopt failed");
+    if(res) {
+        error(1,errno, "setsockopt failed");
+    }
 }
 
 void Game::assignToEpoll(int epollHandler) {
@@ -190,14 +192,86 @@ void Game::assignToEpoll(int epollHandler) {
 
 }
 
-void Game::setGameInterval(int epollHandler, int length){
+void Game::initTimeout(int epollHandler){
     int tfd;//timer fd
-    this->intervalLength = length;
 
     if((tfd= timerfd_create(CLOCK_MONOTONIC,TFD_NONBLOCK)) < 0)
         cout<<"timerfd create error"<<endl;
 
     this->timeFd = tfd;
+
+    epoll_event event;
+    event.data.fd = tfd;
+    event.events = EPOLLIN;
+
+    if( epoll_ctl(epollHandler,EPOLL_CTL_ADD,this->timeFd,&event) < 0)
+        cout<<"epoll_ctl error"<<endl;
+
+
+    this->setGameTimeout(5,END_OF_ROUND);
+}
+
+
+void Game::processGameTimeout() {
+
+    uint64_t value;
+    read(this->timeFd, &value, 8);
+
+
+    switch(this->timeoutCommand){
+        case END_OF_ROUND:
+            cout << "[TIMEOUT] End of round." << endl;
+            for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
+                it->writeData(END_OF_ROUND);
+            }
+            this->setGameTimeout(20, LETTER_VOTE);
+            break;
+        default:
+            cout << "[TIMEOUT] No matching command" << endl;
+            this->setGameTimeout(5, END_OF_ROUND);
+    }
+
+
+}
+
+
+void Game::processCommand(int clientFd, int command, string argument) {
+
+    COMMAND cmd = static_cast<COMMAND>(command);
+
+    switch (cmd){
+        case SET_NICKNAME:
+            cout << "change nick" << endl;
+            break;
+        case LETTER_VOTE:
+            cout << "vote for letter" << endl;
+            break;
+        default:
+            cout << "[SERVER] Unknown command from player";
+            break;
+    }
+}
+
+
+void Game::getDictionaryFromFile(string filename) {
+    string line;
+    ifstream myfile (filename);
+    if (myfile.is_open())
+    {
+        while ( getline (myfile,line) )
+        {
+            this->dictionary.push_back( (string)line );
+        }
+        myfile.close();
+        cout<<"[SERVER] " << dictionary.size() << " word(s) read from " << filename << endl;
+
+    }
+    else{
+        cout << "Unable to open file";
+    }
+}
+
+void Game::setGameTimeout(int length, COMMAND command) {
 
     struct itimerspec newValue;
     struct itimerspec oldValue;
@@ -213,46 +287,11 @@ void Game::setGameInterval(int epollHandler, int length){
     newValue.it_interval = ts;
     if( timerfd_settime(this->timeFd,0,&newValue,&oldValue) <0)
     {
-        cout<<"settime error"<<strerror(errno)<<endl;
+        cout<<"settime error "<<strerror(errno)<<endl;
     }
 
 
-    epoll_event event;
-    event.data.fd = tfd;
-    event.events = EPOLLIN;
-
-    if( epoll_ctl(epollHandler,EPOLL_CTL_ADD,this->timeFd,&event) < 0)
-        cout<<"epoll_ctl error"<<endl;
-}
-
-
-void Game::processTimeInterval() {
-    uint64_t value;
-    read(this->timeFd, &value, 8);
-    cout<<"[GAME] " << this->intervalLength << "secs have passed. End of round."<<endl;
-
-
-    for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
-        it->writeData(END_OF_ROUND);
-    }
-}
-
-
-void Game::processCommand(int command, string argument) {
-
-    COMMAND cmd = static_cast<COMMAND>(command);
-
-    switch (cmd){
-        case SET_NICKNAME:
-            cout << "change nick" << endl;
-            break;
-        case LETTER_VOTE:
-            cout << "vote for letter" << endl;
-            break;
-        default:
-            cout << "[SERVER] Unknown command from player";
-            break;
-    }
-
+    this->timeoutCommand = command;
+    this->timeoutLength = length;
 
 }

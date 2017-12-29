@@ -30,12 +30,14 @@ Game game;
 
 
 int main(int argc, char ** argv){
+    cout << "[SERVER]: start" << endl;
 
+    game.getDictionaryFromFile("dictionary.txt");
 
     int epollHandler = epoll_create1(0);
 
     game.assignToEpoll(epollHandler);
-    game.setGameInterval(epollHandler, 5);
+    game.initTimeout(epollHandler);
 
 
     int servFd = game.getFd();
@@ -46,16 +48,18 @@ int main(int argc, char ** argv){
     epoll_event event;
 
     while((resultCount = epoll_wait(epollHandler, &event, 1, -1)) != -1){
-        if( event.events == EPOLLIN && event.data.fd == servFd ){
-            game.acceptConnection(epollHandler);
-        }
 
-        if( (event.events == EPOLLIN) && event.data.fd != servFd  && event.data.fd != tfd){
-            game.processMessage(event.data.fd);
-        }
+        if(event.events == EPOLLIN){
 
-        if( event.events == EPOLLIN  && event.data.fd == tfd){
-            game.processTimeInterval();
+            if(event.data.fd == servFd){
+                game.acceptConnection(epollHandler);
+
+            }else if(event.data.fd == tfd){
+                game.processGameTimeout();
+
+            }else{
+                game.processMessage(event.data.fd);
+            }
         }
 
     }
