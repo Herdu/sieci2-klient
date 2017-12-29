@@ -51,9 +51,10 @@ private:
 
     void removePlayer(int fd);
     void sendToAll(COMMAND command, string argument);
-
+    void sendToPlayer(int clientFd,COMMAND command, string argument );
     void processCommand(int clientFd, int command, string argument);
-
+    void showLetter(string argument);
+    void endOfRound();
     //init stuff
     void setReuseAddr();
 

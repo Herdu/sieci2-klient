@@ -8,20 +8,20 @@ Game::Game()
 
 void Game::setNewPassword(QString password){
 
-   qDebug() << password ;
+   qDebug() << "password: "<< password;
    this->currentPassword = password;
-
-
-    char* mask = password.toUtf8().data();
+   QString mask = "";
 
     for(int i=0; i< password.length(); i++){
 
-        if(mask[i] != ' '){
-            mask[i] = '_';
+        if(password.at(i) != QChar(' ')){
+            mask+="_";
+        }else{
+            mask+=" ";
         }
     }
-    this->currentMask = QString::fromUtf8(mask);
-
+    this->currentMask = mask;
+     qDebug() << "mask    " << this->currentMask;
 }
 
 
@@ -41,11 +41,7 @@ QString Game::getPassword(){
             _password += password.at(i);
             _password += " ";
         }
-
-
-
     }
 
     return  _password;
-
 }

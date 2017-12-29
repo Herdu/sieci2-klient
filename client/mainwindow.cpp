@@ -142,15 +142,22 @@ bool MainWindow::writeData(COMMAND command, QString data)
 
         QString temp;
 
-        temp =  QString::fromStdString(to_string(command) + ":") + data + ";";
-        qDebug() << temp;
+        if(data == nullptr){
+            temp =  QString::fromStdString(to_string(command)) + ":;";
+        }else{
+            temp =  QString::fromStdString(to_string(command)) + ":" + data + ";";
+
+        }
+
+        temp =  QString::fromStdString(to_string(command)) + ":" + data + ";";
+        qDebug() << "writing to buffer: " << temp;
         QByteArray _data = temp.toUtf8();
 
 
-        //this->pSocket->write(IntToArray(_data.size())); //write size of data
-        //this->pSocket->write(IntToArray(255)); //write size of data
         this->pSocket->write(_data); //write the data itself
-        return this->pSocket->waitForBytesWritten();
+        //return this->pSocket->waitForBytesWritten();
+
+
     }
     else
         return false;
@@ -209,9 +216,9 @@ void MainWindow::processMessage(int command){
     case END_OF_ROUND:
             qDebug() << "End of round";
         break;
-    default:
 
-            qDebug() << "Unknown command";
+    default:
+            qDebug() << "Unknown command without argument";
         break;
     }
 
@@ -228,6 +235,10 @@ void MainWindow::processMessage(int command, QString argument){
             this->game.setNewPassword(argument);
             this->prepareNewGame();
         break;
+    case SEND_MASK:
+        this->game.setMask(argument);
+        this->ui->label_password->setText(this->game.getPassword());
+        break;
     default:
 
             qDebug() << "Unknown command: "<< cmd << " : " << argument;
@@ -243,7 +254,9 @@ void MainWindow::prepareNewGame(){
 
 
 void MainWindow::init(){
+    this->writeData(GET_PASSWORD, nullptr);
 }
+
 
 
 

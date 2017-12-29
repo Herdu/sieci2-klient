@@ -15,6 +15,7 @@ public:
     void setNewPassword(QString password);
     QString getMask() { return this->currentMask; }
     QString getPassword();
+    void setMask(QString mask){this->currentMask = mask;}
 };
 
 #endif // GAME_H

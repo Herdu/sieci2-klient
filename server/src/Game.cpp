@@ -30,7 +30,7 @@ Game::Game(){
     // bind to any address and port provided in arguments
     sockaddr_in serverAddr{.sin_family=AF_INET, .sin_port=htons((short)port), .sin_addr={INADDR_ANY}};
 
-    int res = bind(this->fd, (sockaddr*) &serverAddr, sizeof(serverAddr));
+    int res = bind(this->fd, (sockaddr*)&serverAddr, sizeof(serverAddr));
 
     if(res) {
         error(1, errno, "bind failed");
@@ -76,44 +76,49 @@ void Game::removePlayer(int fd){
 
 void Game::processMessage(int clientFd){
     // read a message
-    char buffer[255];
-    int count = read(clientFd, buffer, 255);
+    char buffer[1024];
+    int count = read(clientFd, buffer, 1024);
+
+    cout << "reading buffer" << endl;
+
     if(count < 1) {
         this->removePlayer(clientFd);
     } else {
-
         char* command_array = strtok(buffer, ";");
+
         while(command_array)
         {
+            char* temp = command_array;
+            command_array = strtok(NULL, ";");
+
             int command_index;
             string command_argument;
             int i = 0;
 
-            char* single_cmd_array = strtok(command_array, ":");
+            char* single_cmd_array = strtok(temp, ":");
 
-            while(single_cmd_array){
+            while(single_cmd_array) {
 
-                if(i==0){
-                    sscanf(single_cmd_array, "%d", &command_index);
-                }else if(i==1){
-                    command_argument = string(single_cmd_array);
-                }else{
+                char *temp = single_cmd_array;
+                single_cmd_array = strtok(NULL, ":");
+
+                if (i == 0) {
+                    sscanf(temp, "%d", &command_index);
+                } else if (i == 1) {
+                    command_argument = string(temp);
+                } else {
                     break;
                 }
                 i++;
-                single_cmd_array = strtok(NULL, ":");
+
             }
 
+
+            cout << "processing command " << command_index << "  " << command_argument << endl;
             this->processCommand(clientFd, command_index, command_argument);
 
-
-            command_array = strtok(NULL, ";");
         }
-
-
     }
-
-
 
 }
 
@@ -121,6 +126,15 @@ void Game::processMessage(int clientFd){
 void Game::sendToAll(COMMAND command, string argument){
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
         it->writeData(command, argument);
+    }
+}
+
+void Game::sendToPlayer(int clientFd, COMMAND command, string argument){
+    for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
+        if(it->getFd() == clientFd){
+            it->writeData(command, argument);
+            return;
+        }
     }
 }
 
@@ -141,7 +155,7 @@ void Game::acceptConnection(int epollHandler){
     this->addPlayer(clientFd);
 
     epoll_event event;
-    event.events = EPOLLIN || EPOLLET;
+    event.events = EPOLLIN;
     event.data.fd = clientFd;
 
     epoll_ctl(epollHandler, EPOLL_CTL_ADD, clientFd, &event);
@@ -188,24 +202,25 @@ void Game::processGameTimeout() {
     uint64_t value;
     read(this->timeFd, &value, 8);
 
-
     switch(this->timeoutCommand){
         case END_OF_ROUND:
             cout << "[TIMEOUT] End of round." << endl;
-
-            this->setGameTimeout(20, LETTER_VOTE);
+            this->timeoutCommand = NOTHING;
+            //TODO PRZELICZENIE GLOSOW
             break;
 
         case NEW_PASSWORD:
             cout<< "[GAME] setting new password" <<endl;
             this->start();
             break;
+        case NEXT_TOUR:
+            cout<<"[GAME] next tour" << endl;
+            break;
+
         default:
-            cout << "[TIMEOUT] No matching command" << endl;
-            this->setGameTimeout(5, END_OF_ROUND);
+            cout << "[TIMEOUT] No matching command " << endl;
+            //this->setGameTimeout(5, END_OF_ROUND);
     }
-
-
 }
 
 
@@ -214,11 +229,17 @@ void Game::processCommand(int clientFd, int command, string argument) {
     COMMAND cmd = static_cast<COMMAND>(command);
 
     switch (cmd){
+        case GET_PASSWORD:
+            cout << "[GAME] player " << clientFd <<" asked for password with mask" << endl;
+            this->sendToPlayer(clientFd, NEW_PASSWORD, this->currentPassword);
+            this->sendToPlayer(clientFd, SEND_MASK, this->currentMask);
+            break;
         case SET_NICKNAME:
-            cout << "change nick" << endl;
+            cout << "[GAME] Set nickname '" <<  argument <<"' for player with fd = "<< clientFd << endl;
             break;
         case LETTER_VOTE:
             cout << "vote for letter" << endl;
+            this->showLetter(argument);
             break;
         default:
             cout << "[SERVER] Unknown command from player";
@@ -272,14 +293,71 @@ void Game::setGameTimeout(int length, COMMAND command) {
 
 
 void Game::start(){
+    //Begin of round
+
+    //prepare password and mask
     int temp = rand() % this->dictionary.size();
+    this->currentPassword = dictionary[temp];
+    string currentMask = this->currentPassword;
 
+    for(int i=0; i<this->currentPassword.length(); i++){
+        if(this->currentPassword[i] == ' ')
+        {
+            currentMask[i] = ' ';
+        }else{
+            currentMask[i] = '_';
+        }
+    }
+    this->currentMask = currentMask;
 
-    currentPassword = dictionary[temp];
+    cout << "[GAME] Current password is: " << currentPassword << endl;
 
+    //new_password means begin of first tour in the round
     this->sendToAll(NEW_PASSWORD, currentPassword);
 
+    //next tour every 15sec
+    this->setGameTimeout(15, NEXT_TOUR);
 
-    this->setGameTimeout(5,NEW_PASSWORD);
+}
 
+void Game::showLetter(string argument) {
+    cout << "[GAME] Checking password for letter "<< argument << endl;
+    int count = 0;
+    int hiddenCount = 0;
+    string password = this->currentPassword;
+    string mask = this->currentMask;
+    if(argument.size() < 1){
+        return;
+    }
+    char letter = tolower(argument[0]);
+
+    for (int i = 0; i < password.size(); i++)
+    {
+        if (tolower(password[i]) == letter){
+            mask[i] = ' ';
+            count++;
+        }
+
+        if(mask[i] != '_'){
+            hiddenCount ++;
+        }
+    }
+
+
+    if(count > 0){
+        cout << "[GAME] Letter " << letter << " is in password! "<< endl;
+        this->currentMask = mask;
+        this->sendToAll(SEND_MASK, this->currentMask);
+    }else{
+        cout << "[GAME] Letter " << letter << " is not in password."<< endl;
+    }
+
+    if(hiddenCount == password.size()){
+        this->endOfRound();
+    }
+
+}
+
+void Game::endOfRound(){
+    this->setGameTimeout(3, NEW_PASSWORD);
 }
