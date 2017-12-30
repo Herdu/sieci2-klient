@@ -5,7 +5,7 @@
 #include <iostream>
 #include <QTcpSocket>
 #include <QHostAddress>
-
+#include <QColor>
 #include "commands.h"
 #include "game.h"
 
@@ -33,9 +33,13 @@ private:
     void drawImage();
     Game game;
 
+    bool isKeyboardBlocked;
+
     void processMessage(int command);
     void processMessage(int command, QString argument);
     void prepareNewGame();
+    void processAlphabet(QString data);
+    void hideLetter(QString letter);
 
 
 private slots:

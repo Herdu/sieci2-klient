@@ -167,6 +167,7 @@ public:
         pushButton_letter_e = new QPushButton(letter_buttons_container);
         pushButton_letter_e->setObjectName(QString::fromUtf8("pushButton_letter_e"));
         pushButton_letter_e->setGeometry(QRect(230, 10, 40, 40));
+        pushButton_letter_e->setStyleSheet(QString::fromUtf8(""));
         label_password = new QLabel(centralWidget);
         label_password->setObjectName(QString::fromUtf8("label_password"));
         label_password->setGeometry(QRect(0, 0, 661, 141));

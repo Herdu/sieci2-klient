@@ -35,6 +35,15 @@
 
 using namespace std;
 
+
+
+struct Alphabet{
+    char character;
+    int votes;
+    bool isVisible;
+};
+
+
 class Game{
 
 private:
@@ -48,14 +57,26 @@ private:
     uint16_t port;
     vector<string> dictionary;
     vector<Player> player;
+    vector<Alphabet> alphabet;
     int numberOfPieces;
 
     void removePlayer(int fd);
     void sendToAll(COMMAND command, string argument);
+    void sendToAll(COMMAND command, int argument);
     void sendToPlayer(int clientFd,COMMAND command, string argument );
+    void sendToPlayer(int clientFd,COMMAND command, int argument );
     void processCommand(int clientFd, int command, string argument);
-    void showLetter(string argument);
+    void showLetter(char letter);
     void endOfRound();
+    void endOfTour();
+    void roundLost();
+    void sendAlphabet();
+    void resetAlphabet();
+    string getAlphabet();
+    void sendAlphabetToPlayer(int clientFd);
+
+    void makeVote(string argument);
+
     //init stuff
     void setReuseAddr();
 

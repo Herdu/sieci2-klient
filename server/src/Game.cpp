@@ -43,6 +43,20 @@ Game::Game(){
         error(1, errno, "listen failed");
     }
 
+
+
+    //init alphabet
+
+    char tab [] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p','q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+
+    for( int i=0; i< 26; i++){
+        Alphabet a;
+        a.character = tab[i];
+        a.votes = 0;
+        a.isVisible = false;
+        this->alphabet.push_back(a);
+    }
+
 }
 
 
@@ -129,6 +143,10 @@ void Game::sendToAll(COMMAND command, string argument){
     }
 }
 
+void Game::sendToAll(COMMAND command, int argument) {
+    this->sendToAll(command, to_string(argument));
+}
+
 void Game::sendToPlayer(int clientFd, COMMAND command, string argument){
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
         if(it->getFd() == clientFd){
@@ -138,6 +156,9 @@ void Game::sendToPlayer(int clientFd, COMMAND command, string argument){
     }
 }
 
+void Game::sendToPlayer(int clientFd, COMMAND command, int argument){
+    this->sendToPlayer(clientFd, command, to_string(argument));
+}
 
 
 void Game::acceptConnection(int epollHandler){
@@ -215,13 +236,11 @@ void Game::processGameTimeout() {
             this->start();
             break;
         case NEXT_TOUR:
-            cout<<"[GAME] next tour" << endl;
-            this->sendToAll(NEXT_TOUR, " ");
+            this->endOfTour();
             break;
 
         default:
             cout << "[TIMEOUT] No matching command " << endl;
-            //this->setGameTimeout(5, END_OF_ROUND);
     }
 }
 
@@ -235,13 +254,15 @@ void Game::processCommand(int clientFd, int command, string argument) {
             cout << "[GAME] player " << clientFd <<" asked for password with mask" << endl;
             this->sendToPlayer(clientFd, NEW_PASSWORD, this->currentPassword);
             this->sendToPlayer(clientFd, SEND_MASK, this->currentMask);
+            this->sendAlphabetToPlayer(clientFd);
+            this->sendToPlayer(clientFd, SEND_PIECES, this->numberOfPieces);
             break;
         case SET_NICKNAME:
             cout << "[GAME] Set nickname '" <<  argument <<"' for player with fd = "<< clientFd << endl;
             break;
         case LETTER_VOTE:
             cout << "vote for letter" << endl;
-            this->showLetter(argument);
+            this->makeVote(argument);
             break;
         default:
             cout << "[SERVER] Unknown command from player";
@@ -297,6 +318,7 @@ void Game::setGameTimeout(int length, COMMAND command) {
 void Game::start(){
     //Begin of round
     this->numberOfPieces = 0;
+    this->resetAlphabet();
 
     //prepare password and mask
     int temp = rand() % this->dictionary.size();
@@ -323,16 +345,13 @@ void Game::start(){
 
 }
 
-void Game::showLetter(string argument) {
-    cout << "[GAME] Checking password for letter "<< argument << endl;
+void Game::showLetter(char letter) {
+
+    cout << "[GAME] Checking password for letter "<< letter << endl;
     int count = 0;
     int hiddenCount = 0;
     string password = this->currentPassword;
     string mask = this->currentMask;
-    if(argument.size() < 1){
-        return;
-    }
-    char letter = tolower(argument[0]);
 
     for (int i = 0; i < password.size(); i++)
     {
@@ -353,14 +372,124 @@ void Game::showLetter(string argument) {
         this->sendToAll(SEND_MASK, this->currentMask);
     }else{
         cout << "[GAME] Letter " << letter << " is not in password."<< endl;
+        this->numberOfPieces++;
+
+        if(this->numberOfPieces>9){
+            this->roundLost();
+        }
+
     }
+    if(letter){
+        string l = "";
+        l += letter;
+
+        if(l.length() > 0){
+
+
+
+            this->sendToAll(SEND_LETTER, l);
+        }
+    }
+    this->sendToAll(SEND_PIECES, this->numberOfPieces);
+
 
     if(hiddenCount == password.size()){
         this->endOfRound();
     }
 
+
+    for(vector<Alphabet>::iterator it = this->alphabet.begin(); it != this->alphabet.end(); ++it) {
+        if(it->character == letter){
+            it->isVisible = false;
+            break;
+        }
+    }
+
 }
 
 void Game::endOfRound(){
+    cout << "[GAME] End of round! " << endl;
     this->setGameTimeout(3, NEW_PASSWORD);
+    this->sendToAll(SEND_PIECES, this->numberOfPieces);
+    this->resetAlphabet();
+
+
+}
+
+void Game::makeVote(string argument) {
+    if(argument.length() > 0){
+        char letter = tolower(argument.at(0));
+        for(vector<Alphabet>::iterator it = this->alphabet.begin(); it != this->alphabet.end(); ++it) {
+            if(it->character == letter){
+                it->votes++;
+                this->sendAlphabet();
+                return;
+            }
+        }
+    }
+
+}
+
+
+void Game::endOfTour() {
+
+    //calc votes
+
+    Alphabet winner;
+    int max = 0;
+
+    for(vector<Alphabet>::iterator it = this->alphabet.begin(); it != this->alphabet.end(); ++it) {
+        if((it->isVisible) && it->votes >= max){
+            winner = (*it);
+            max = it->votes;
+        }
+        if(it->votes > 0){
+            it->votes = 0;
+        }
+    }
+
+    cout << "vote winner: "<< winner.character << endl;
+
+    this->showLetter(winner.character);
+
+    cout<<"[GAME] next tour" << endl;
+    this->sendToAll(NEXT_TOUR, " ");
+}
+
+
+string Game::getAlphabet(){
+    string data = "";
+
+    for(vector<Alphabet>::iterator it = this->alphabet.begin(); it != this->alphabet.end(); ++it) {
+        if((!it->isVisible)){
+            data += "-1,";
+        }else{
+            data += to_string(it->votes) + ",";
+        }
+    }
+
+    return data;
+}
+
+
+void Game::sendAlphabetToPlayer(int clientFd){
+    string data = this->getAlphabet();
+    this->sendToPlayer(clientFd, SEND_ALPHABET, data);
+}
+
+void Game::sendAlphabet(){
+    string data = this->getAlphabet();
+    this->sendToAll(SEND_ALPHABET, data);
+}
+
+void Game::resetAlphabet() {
+    for(vector<Alphabet>::iterator it = this->alphabet.begin(); it != this->alphabet.end(); ++it) {
+        it->isVisible = true;
+        it->votes = 0;
+    }
+    this->sendAlphabet();
+}
+
+void Game::roundLost(){
+    this->start();
 }

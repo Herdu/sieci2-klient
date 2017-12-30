@@ -19,6 +19,7 @@ public:
     int getNumberOfPieces(){return this->numberOfPieces; }
     void setMask(QString mask){this->currentMask = mask;}
     void addPiece(){this->numberOfPieces++;}
+    void setPieces(int pieces){this->numberOfPieces = pieces;}
 };
 
 #endif // GAME_H

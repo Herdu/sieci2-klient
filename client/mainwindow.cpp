@@ -51,6 +51,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::letterPressed()
 {
+    if(this->isKeyboardBlocked){
+        return;
+    }
+
     this->resetKeyboard();
 
     QPushButton* button = qobject_cast<QPushButton*>(sender()); //return a pointer to button that emitted event
@@ -62,6 +66,10 @@ void MainWindow::letterPressed()
 
 void MainWindow::letterSelected()
 {
+    if(this->isKeyboardBlocked){
+        return;
+    }
+
     QString letter;
     //get Selected letter
     QObjectList buttonList = ui->letter_buttons_container->children();
@@ -72,9 +80,8 @@ void MainWindow::letterSelected()
     }
 
     this->writeData(LETTER_VOTE, letter);
-
     this->resetKeyboard();
-
+    this->isKeyboardBlocked = true;
     qDebug() << letter;
 }
 
@@ -239,12 +246,34 @@ void MainWindow::processMessage(int command, QString argument){
         this->ui->label_password->setText(this->game.getPassword());
         break;
 
-    case NEXT_TOUR:
-       qDebug() << "NEXT TOUR ";
-       this->game.addPiece();
-       this->drawImage();
+    case SEND_LETTER:
+        this->hideLetter(argument);
         break;
 
+    case NEXT_TOUR:
+       qDebug() << "NEXT TOUR ";
+       this->resetKeyboard();
+
+       //remove active class from all letter buttons
+       for(int i=0; i < this->letterButtons.length(); i++){
+           QPushButton* button = qobject_cast<QPushButton*>(this->letterButtons[i]);
+           button->setProperty( "class", QString::fromStdString(""));
+           button->setStyleSheet("");
+       }
+
+       this->drawImage();
+       this->isKeyboardBlocked = false;
+        break;
+
+    case SEND_ALPHABET:
+        qDebug() << "Alphabet: " << argument;
+        this->processAlphabet(argument);
+        break;
+
+    case SEND_PIECES:
+        this->game.setPieces(argument.toInt());
+        this->drawImage();
+        break;
     default:
 
             qDebug() << "Unknown command: "<< cmd << " : " << argument;
@@ -256,6 +285,13 @@ void MainWindow::processMessage(int command, QString argument){
 void MainWindow::prepareNewGame(){
    this->ui->label_password->setText(this->game.getPassword());
 
+    for(int i=0; i < this->letterButtons.length(); i++){
+        QPushButton* button = qobject_cast<QPushButton*>(this->letterButtons[i]);
+        button->setVisible(true);
+    }
+
+
+   this->isKeyboardBlocked = false;
 }
 
 
@@ -277,6 +313,76 @@ void MainWindow::drawImage(){
     this->ui->label_image->setPixmap(img);
 }
 
+void MainWindow::processAlphabet(QString data){
+
+    char tab [] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p','q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+
+    QStringList pieces = data.split( "," );
+
+    if(pieces.length() <26 ){
+        qDebug() << "Wrong alphabet data";
+        return;
+    }
+
+    float  colors[26] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+    float max = 0;
+
+    for(int i=0; i<26; i++){
+        float tmp = pieces[i].toFloat();
+        colors[i] = tmp;
+        if (tmp > 0){
+
+
+
+            if(tmp > max){
+                max = tmp;
+            }
+        }
+
+
+    }
+
+
+    for(int i=0; i<26; i++){
+        string x;
+        x+= tab[i];
+        QString buttonName = "pushButton_letter_";
+        QString buttonLetter = QString::fromStdString(x);
+        QPushButton* button = ui->letter_buttons_container->findChild<QPushButton*>(buttonName+buttonLetter);
+
+        if(colors[i] > 0){
+
+            //stylesheet += QString::number();
+            float color = 200 - (colors[i]/max) * 80;
+            int iColor = (int)color;
+            QColor qColor;
+            qDebug() << iColor << ", ";
+            qColor.setRgb(iColor, iColor, iColor);
+            QString stylesheet = "background-color: "+ qColor.name() + ";";
+            button->setStyleSheet(stylesheet);
+        }else{
+            if(colors[i] < 0){
+                button->setVisible(false);
+            }
+        }
+
+
+    }
+}
+
+void MainWindow::hideLetter(QString letter){
+    if(letter.length() < 1){
+        return;
+    }
+    QString buttonName = "pushButton_letter_";
+    QPushButton* button = ui->letter_buttons_container->findChild<QPushButton*>(buttonName+letter);
+
+    if(button){
+        button->setVisible(false);
+    }
+
+
+}
 
 
 
