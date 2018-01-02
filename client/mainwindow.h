@@ -48,6 +48,7 @@ private slots:
     void readTcpData();
     void readyRead();
     void disconnected();
+    void passwordGuess();
     bool writeData(COMMAND command, QString data);
 };
 

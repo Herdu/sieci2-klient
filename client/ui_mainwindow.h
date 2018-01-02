@@ -13,8 +13,11 @@
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
+#include <QtGui/QFrame>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QListView>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
@@ -56,6 +59,11 @@ public:
     QPushButton *pushButton_letter_e;
     QLabel *label_password;
     QLabel *label_image;
+    QLineEdit *lineEdit_password_guess;
+    QPushButton *pushButton_guess_password;
+    QFrame *frame;
+    QLabel *label;
+    QListView *listView;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -74,10 +82,10 @@ public:
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         pushButton_select_letter = new QPushButton(centralWidget);
         pushButton_select_letter->setObjectName(QString::fromUtf8("pushButton_select_letter"));
-        pushButton_select_letter->setGeometry(QRect(290, 430, 221, 31));
+        pushButton_select_letter->setGeometry(QRect(240, 470, 221, 31));
         letter_buttons_container = new QWidget(centralWidget);
         letter_buttons_container->setObjectName(QString::fromUtf8("letter_buttons_container"));
-        letter_buttons_container->setGeometry(QRect(100, 170, 451, 211));
+        letter_buttons_container->setGeometry(QRect(110, 240, 451, 211));
         letter_buttons_container->setStyleSheet(QString::fromUtf8("#letter_buttons_container{\n"
 "	background-color: gray;\n"
 "}\n"
@@ -170,7 +178,7 @@ public:
         pushButton_letter_e->setStyleSheet(QString::fromUtf8(""));
         label_password = new QLabel(centralWidget);
         label_password->setObjectName(QString::fromUtf8("label_password"));
-        label_password->setGeometry(QRect(0, 0, 661, 141));
+        label_password->setGeometry(QRect(30, 0, 661, 141));
         QFont font;
         font.setPointSize(28);
         label_password->setFont(font);
@@ -178,10 +186,28 @@ public:
         label_password->setAlignment(Qt::AlignCenter);
         label_image = new QLabel(centralWidget);
         label_image->setObjectName(QString::fromUtf8("label_image"));
-        label_image->setGeometry(QRect(660, 0, 301, 521));
+        label_image->setGeometry(QRect(670, 10, 221, 261));
         label_image->setFont(font);
         label_image->setStyleSheet(QString::fromUtf8(""));
         label_image->setAlignment(Qt::AlignCenter);
+        lineEdit_password_guess = new QLineEdit(centralWidget);
+        lineEdit_password_guess->setObjectName(QString::fromUtf8("lineEdit_password_guess"));
+        lineEdit_password_guess->setGeometry(QRect(70, 150, 341, 27));
+        pushButton_guess_password = new QPushButton(centralWidget);
+        pushButton_guess_password->setObjectName(QString::fromUtf8("pushButton_guess_password"));
+        pushButton_guess_password->setGeometry(QRect(410, 150, 151, 27));
+        frame = new QFrame(centralWidget);
+        frame->setObjectName(QString::fromUtf8("frame"));
+        frame->setGeometry(QRect(590, 280, 361, 221));
+        frame->setFrameShape(QFrame::StyledPanel);
+        frame->setFrameShadow(QFrame::Raised);
+        label = new QLabel(frame);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setGeometry(QRect(140, 10, 91, 41));
+        label->setAlignment(Qt::AlignCenter);
+        listView = new QListView(frame);
+        listView->setObjectName(QString::fromUtf8("listView"));
+        listView->setGeometry(QRect(5, 50, 351, 171));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -196,7 +222,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
-        pushButton_select_letter->setText(QApplication::translate("MainWindow", "Wybierz", 0, QApplication::UnicodeUTF8));
+        pushButton_select_letter->setText(QApplication::translate("MainWindow", "Vote for character", 0, QApplication::UnicodeUTF8));
         pushButton_letter_z->setText(QApplication::translate("MainWindow", "Z", 0, QApplication::UnicodeUTF8));
         pushButton_letter_n->setText(QApplication::translate("MainWindow", "N", 0, QApplication::UnicodeUTF8));
         pushButton_letter_y->setText(QApplication::translate("MainWindow", "Y", 0, QApplication::UnicodeUTF8));
@@ -224,8 +250,10 @@ public:
         pushButton_letter_j->setText(QApplication::translate("MainWindow", "J", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setText(QApplication::translate("MainWindow", "E", 0, QApplication::UnicodeUTF8));
         pushButton_letter_e->setProperty("class", QVariant(QString()));
-        label_password->setText(QApplication::translate("MainWindow", "Miejsce na has\305\202o", 0, QApplication::UnicodeUTF8));
+        label_password->setText(QString());
         label_image->setText(QApplication::translate("MainWindow", "image", 0, QApplication::UnicodeUTF8));
+        pushButton_guess_password->setText(QApplication::translate("MainWindow", "guess password", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("MainWindow", "Ranking", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

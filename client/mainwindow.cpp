@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_letter_z, SIGNAL(released()), this, SLOT(letterPressed()));
 
     connect(ui->pushButton_select_letter, SIGNAL(released()), this, SLOT(letterSelected()));
+    connect(ui->pushButton_guess_password, SIGNAL(released()), this, SLOT(passwordGuess()));
 
 }
 
@@ -285,6 +286,9 @@ void MainWindow::processMessage(int command, QString argument){
 void MainWindow::prepareNewGame(){
    this->ui->label_password->setText(this->game.getPassword());
 
+   this->game.setPieces(0);
+   this->drawImage();
+
     for(int i=0; i < this->letterButtons.length(); i++){
         QPushButton* button = qobject_cast<QPushButton*>(this->letterButtons[i]);
         button->setVisible(true);
@@ -380,9 +384,25 @@ void MainWindow::hideLetter(QString letter){
     if(button){
         button->setVisible(false);
     }
-
-
 }
+
+void MainWindow::passwordGuess(){
+    if(this->isKeyboardBlocked){
+        return;
+    }
+
+    QString password = this->ui->lineEdit_password_guess->text();
+
+    if(password.length() < 1){
+        return;
+    }
+
+    this->isKeyboardBlocked = true;
+    this->ui->lineEdit_password_guess->setText("");
+    this->writeData(PASSWORD_GUESS, password);
+    qDebug() << password;
+}
+
 
 
 

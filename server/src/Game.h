@@ -74,7 +74,7 @@ private:
     void resetAlphabet();
     string getAlphabet();
     void sendAlphabetToPlayer(int clientFd);
-
+    void passwordGuess(int clientFd, string password);
     void makeVote(string argument);
 
     //init stuff

@@ -22,7 +22,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -35,7 +35,8 @@ static const uint qt_meta_data_MainWindow[] = {
       45,   11,   11,   11, 0x08,
       59,   11,   11,   11, 0x08,
       71,   11,   11,   11, 0x08,
-     104,   91,   86,   11, 0x08,
+      86,   11,   11,   11, 0x08,
+     120,  107,  102,   11, 0x08,
 
        0        // eod
 };
@@ -43,8 +44,8 @@ static const uint qt_meta_data_MainWindow[] = {
 static const char qt_meta_stringdata_MainWindow[] = {
     "MainWindow\0\0letterPressed()\0"
     "letterSelected()\0readTcpData()\0"
-    "readyRead()\0disconnected()\0bool\0"
-    "command,data\0writeData(COMMAND,QString)\0"
+    "readyRead()\0disconnected()\0passwordGuess()\0"
+    "bool\0command,data\0writeData(COMMAND,QString)\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -58,7 +59,8 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 2: _t->readTcpData(); break;
         case 3: _t->readyRead(); break;
         case 4: _t->disconnected(); break;
-        case 5: { bool _r = _t->writeData((*reinterpret_cast< COMMAND(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])));
+        case 5: _t->passwordGuess(); break;
+        case 6: { bool _r = _t->writeData((*reinterpret_cast< COMMAND(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
         default: ;
         }
@@ -97,9 +99,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 7;
     }
     return _id;
 }

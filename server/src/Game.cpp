@@ -251,19 +251,24 @@ void Game::processCommand(int clientFd, int command, string argument) {
 
     switch (cmd){
         case GET_PASSWORD:
-            cout << "[GAME] player " << clientFd <<" asked for password with mask" << endl;
+            cout << "[PLAYER] player " << clientFd <<" asked for password with mask" << endl;
             this->sendToPlayer(clientFd, NEW_PASSWORD, this->currentPassword);
             this->sendToPlayer(clientFd, SEND_MASK, this->currentMask);
             this->sendAlphabetToPlayer(clientFd);
             this->sendToPlayer(clientFd, SEND_PIECES, this->numberOfPieces);
             break;
         case SET_NICKNAME:
-            cout << "[GAME] Set nickname '" <<  argument <<"' for player with fd = "<< clientFd << endl;
+            cout << "[PLAYER] Set nickname '" <<  argument <<"' for player with fd = "<< clientFd << endl;
             break;
         case LETTER_VOTE:
-            cout << "vote for letter" << endl;
+            cout << "[PLAYER] vote for letter" << endl;
             this->makeVote(argument);
             break;
+        case PASSWORD_GUESS:
+            cout << "[PLAYER] password guess" << endl;
+            this->passwordGuess(clientFd, argument);
+            break;
+
         default:
             cout << "[SERVER] Unknown command from player";
             break;
@@ -346,8 +351,6 @@ void Game::start(){
 }
 
 void Game::showLetter(char letter) {
-
-    cout << "[GAME] Checking password for letter "<< letter << endl;
     int count = 0;
     int hiddenCount = 0;
     string password = this->currentPassword;
@@ -448,7 +451,7 @@ void Game::endOfTour() {
         }
     }
 
-    cout << "vote winner: "<< winner.character << endl;
+    cout << "[GAME] vote winner: "<< winner.character << endl;
 
     this->showLetter(winner.character);
 
@@ -492,4 +495,15 @@ void Game::resetAlphabet() {
 
 void Game::roundLost(){
     this->start();
+}
+
+void Game::passwordGuess(int clientFd, string password) {
+
+
+    if(password == this->currentPassword){
+        cout << "password guessed!" << endl;
+        this->endOfRound();
+    }else{
+        cout << "bad password" << endl;
+    }
 }
