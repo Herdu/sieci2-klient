@@ -7,6 +7,33 @@
 
 using namespace std;
 
+bool Game::readConfigFile(const char* filename) {
+
+    string line, dummyLine;
+    int port;
+
+    ifstream myfile (filename);
+    if (myfile.is_open())
+    {
+        try{
+            getline (myfile,dummyLine); //skip first line
+            getline (myfile,line);
+            port = std::stoi( line );
+            cout << "port: " << port << endl;
+
+            this->port = port;
+            myfile.close();
+
+            return true;
+
+        }catch(int e){
+            return false;
+        };
+    }
+    else
+        return false;
+
+}
 
 Game::Game(){
 

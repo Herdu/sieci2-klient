@@ -30,6 +30,12 @@ Game game;
 
 
 int main(int argc, char ** argv){
+
+    if(!game.readConfigFile("config.txt")){
+        cout << "Couldn't read config file" <<endl;
+        exit(1);
+    };
+
     cout << "[SERVER]: start" << endl;
 
     game.getDictionaryFromFile("dictionary.txt");

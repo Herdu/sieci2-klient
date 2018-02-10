@@ -93,6 +93,7 @@ public:
     void assignToEpoll(int epollHandler);
     void initTimeout(int epollHandler);
     void setGameTimeout(int length, COMMAND command);
+    bool readConfigFile(const char* filename);
 
     void processGameTimeout();
     void getDictionaryFromFile(string filename);
