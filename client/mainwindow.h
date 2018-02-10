@@ -40,7 +40,7 @@ private:
     void prepareNewGame();
     void processAlphabet(QString data);
     void hideLetter(QString letter);
-
+    void logMessage(QString message);
 
 private slots:
     void letterPressed();
@@ -50,6 +50,7 @@ private slots:
     void disconnected();
     void passwordGuess();
     bool writeData(COMMAND command, QString data);
+
 };
 
 #endif // MAINWINDOW_H

@@ -123,7 +123,7 @@ bool MainWindow::connectTcp (QString address, QString port, QString nick)
             qDebug() << "Connected to server";
             sleep(1);
             this->writeData(SET_NICKNAME, nick);
-
+            this->logMessage("Welcome in Hangman Game! You can either try to guess the password or vote for next letter in each turn.");
             return true;
 
         }
@@ -139,7 +139,6 @@ bool MainWindow::connectTcp (QString address, QString port, QString nick)
 void MainWindow::readTcpData()
 {
     QByteArray data = this->pSocket->readAll();
-    qDebug() << data;
 }
 
 bool MainWindow::writeData(COMMAND command, QString data)
@@ -223,7 +222,16 @@ void MainWindow::processMessage(int command){
     case END_OF_ROUND:
             qDebug() << "End of round";
         break;
+    case PASSWORD_GUESS_SUCCESS:
+            this->logMessage("Congratulations! You've guessed the password!");
 
+        break;
+    case PASSWORD_GUESS_FAILURE:
+            this->logMessage("Sorry, you've typed wrong password :(");
+        break;
+    case SERVER_OVERLOAD:
+            qDebug() << "SERVER OVERLOAD";
+        break;
     default:
             qDebug() << "Unknown command without argument";
         break;
@@ -276,7 +284,6 @@ void MainWindow::processMessage(int command, QString argument){
         this->drawImage();
         break;
     default:
-
             qDebug() << "Unknown command: "<< cmd << " : " << argument;
         break;
     }
@@ -288,12 +295,13 @@ void MainWindow::prepareNewGame(){
 
    this->game.setPieces(0);
    this->drawImage();
+   this->resetKeyboard();
+
 
     for(int i=0; i < this->letterButtons.length(); i++){
         QPushButton* button = qobject_cast<QPushButton*>(this->letterButtons[i]);
         button->setVisible(true);
     }
-
 
    this->isKeyboardBlocked = false;
 }
@@ -403,6 +411,11 @@ void MainWindow::passwordGuess(){
     qDebug() << password;
 }
 
+void MainWindow::logMessage(QString message){
+    this->ui->listWidget->addItem(message);
+    this->ui->listWidget->setWordWrap(true);
+    this->ui->listWidget->scrollToBottom();
+}
 
 
 

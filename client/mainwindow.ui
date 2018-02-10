@@ -29,31 +29,18 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton_select_letter">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>470</y>
-      <width>221</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Vote for character</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="letter_buttons_container" native="true">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>10</x>
       <y>240</y>
-      <width>451</width>
-      <height>211</height>
+      <width>571</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">#letter_buttons_container{
-	background-color: gray;
+	border: gray solid 1px;
 }
 
 #letter_buttons_container  *{
@@ -67,8 +54,8 @@
     <widget class="QPushButton" name="pushButton_letter_z">
      <property name="geometry">
       <rect>
-       <x>230</x>
-       <y>160</y>
+       <x>380</x>
+       <y>110</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -80,7 +67,7 @@
     <widget class="QPushButton" name="pushButton_letter_n">
      <property name="geometry">
       <rect>
-       <x>280</x>
+       <x>180</x>
        <y>60</y>
        <width>40</width>
        <height>40</height>
@@ -93,8 +80,8 @@
     <widget class="QPushButton" name="pushButton_letter_y">
      <property name="geometry">
       <rect>
-       <x>180</x>
-       <y>160</y>
+       <x>330</x>
+       <y>110</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -145,8 +132,8 @@
     <widget class="QPushButton" name="pushButton_letter_q">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>110</y>
+       <x>330</x>
+       <y>60</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -158,7 +145,7 @@
     <widget class="QPushButton" name="pushButton_letter_m">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>130</x>
        <y>60</y>
        <width>40</width>
        <height>40</height>
@@ -171,8 +158,8 @@
     <widget class="QPushButton" name="pushButton_letter_r">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>110</y>
+       <x>380</x>
+       <y>60</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -184,8 +171,8 @@
     <widget class="QPushButton" name="pushButton_letter_s">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>110</y>
+       <x>430</x>
+       <y>60</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -210,8 +197,8 @@
     <widget class="QPushButton" name="pushButton_letter_i">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>60</y>
+       <x>430</x>
+       <y>10</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -223,8 +210,8 @@
     <widget class="QPushButton" name="pushButton_letter_t">
      <property name="geometry">
       <rect>
-       <x>180</x>
-       <y>110</y>
+       <x>480</x>
+       <y>60</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -249,7 +236,7 @@
     <widget class="QPushButton" name="pushButton_letter_w">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>230</x>
        <y>110</y>
        <width>40</width>
        <height>40</height>
@@ -262,7 +249,7 @@
     <widget class="QPushButton" name="pushButton_letter_o">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>230</x>
        <y>60</y>
        <width>40</width>
        <height>40</height>
@@ -275,7 +262,7 @@
     <widget class="QPushButton" name="pushButton_letter_k">
      <property name="geometry">
       <rect>
-       <x>130</x>
+       <x>30</x>
        <y>60</y>
        <width>40</width>
        <height>40</height>
@@ -288,7 +275,7 @@
     <widget class="QPushButton" name="pushButton_letter_u">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>130</x>
        <y>110</y>
        <width>40</width>
        <height>40</height>
@@ -301,7 +288,7 @@
     <widget class="QPushButton" name="pushButton_letter_l">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>80</x>
        <y>60</y>
        <width>40</width>
        <height>40</height>
@@ -340,7 +327,7 @@
     <widget class="QPushButton" name="pushButton_letter_x">
      <property name="geometry">
       <rect>
-       <x>380</x>
+       <x>280</x>
        <y>110</y>
        <width>40</width>
        <height>40</height>
@@ -353,7 +340,7 @@
     <widget class="QPushButton" name="pushButton_letter_p">
      <property name="geometry">
       <rect>
-       <x>380</x>
+       <x>280</x>
        <y>60</y>
        <width>40</width>
        <height>40</height>
@@ -366,7 +353,7 @@
     <widget class="QPushButton" name="pushButton_letter_v">
      <property name="geometry">
       <rect>
-       <x>280</x>
+       <x>180</x>
        <y>110</y>
        <width>40</width>
        <height>40</height>
@@ -379,8 +366,8 @@
     <widget class="QPushButton" name="pushButton_letter_j">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>60</y>
+       <x>480</x>
+       <y>10</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -412,10 +399,10 @@
    <widget class="QLabel" name="label_password">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>0</y>
-      <width>661</width>
-      <height>141</height>
+      <x>10</x>
+      <y>110</y>
+      <width>571</width>
+      <height>101</height>
      </rect>
     </property>
     <property name="font">
@@ -460,8 +447,8 @@
    <widget class="QLineEdit" name="lineEdit_password_guess">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>150</y>
+      <x>40</x>
+      <y>470</y>
       <width>341</width>
       <height>27</height>
      </rect>
@@ -470,8 +457,8 @@
    <widget class="QPushButton" name="pushButton_guess_password">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>150</y>
+      <x>380</x>
+      <y>470</y>
       <width>151</width>
       <height>27</height>
      </rect>
@@ -484,7 +471,7 @@
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>280</y>
+      <y>290</y>
       <width>361</width>
       <height>221</height>
      </rect>
@@ -521,6 +508,59 @@
       </rect>
      </property>
     </widget>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>571</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="autoScroll">
+     <bool>false</bool>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+    <property name="showDropIndicator" stdset="0">
+     <bool>false</bool>
+    </property>
+    <property name="textElideMode">
+     <enum>Qt::ElideNone</enum>
+    </property>
+    <property name="isWrapping" stdset="0">
+     <bool>true</bool>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_select_letter">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>410</y>
+      <width>221</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Vote for character</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

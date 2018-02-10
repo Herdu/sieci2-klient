@@ -93,8 +93,6 @@ void Game::processMessage(int clientFd){
     char buffer[1024];
     int count = read(clientFd, buffer, 1024);
 
-    cout << "reading buffer" << endl;
-
     if(count < 1) {
         this->removePlayer(clientFd);
     } else {
@@ -235,6 +233,7 @@ void Game::processGameTimeout() {
             cout<< "[GAME] setting new password" <<endl;
             this->start();
             break;
+
         case NEXT_TOUR:
             this->endOfTour();
             break;
@@ -248,7 +247,6 @@ void Game::processGameTimeout() {
 void Game::processCommand(int clientFd, int command, string argument) {
 
     COMMAND cmd = static_cast<COMMAND>(command);
-
     switch (cmd){
         case GET_PASSWORD:
             cout << "[PLAYER] player " << clientFd <<" asked for password with mask" << endl;
@@ -270,7 +268,7 @@ void Game::processCommand(int clientFd, int command, string argument) {
             break;
 
         default:
-            cout << "[SERVER] Unknown command from player";
+            cout << "[SERVER] Unknown command from player "<<clientFd << endl;
             break;
     }
 }
@@ -456,7 +454,9 @@ void Game::endOfTour() {
     this->showLetter(winner.character);
 
     cout<<"[GAME] next tour" << endl;
+    this->setGameTimeout(15, NEXT_TOUR);
     this->sendToAll(NEXT_TOUR, " ");
+
 }
 
 
@@ -502,8 +502,10 @@ void Game::passwordGuess(int clientFd, string password) {
 
     if(password == this->currentPassword){
         cout << "password guessed!" << endl;
+        this->sendToPlayer(clientFd, PASSWORD_GUESS_SUCCESS, "");
         this->endOfRound();
     }else{
         cout << "bad password" << endl;
+        this->sendToPlayer(clientFd, PASSWORD_GUESS_FAILURE, "");
     }
 }

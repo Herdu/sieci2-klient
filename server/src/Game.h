@@ -50,6 +50,8 @@ private:
     string currentPassword;
     string currentMask;
 
+    int playerLimit = 2;
+
     int fd; //server socket id
     int timeFd; //time id
     COMMAND timeoutCommand;

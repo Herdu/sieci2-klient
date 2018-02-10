@@ -18,6 +18,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QListView>
+#include <QtGui/QListWidget>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
@@ -29,7 +30,6 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
-    QPushButton *pushButton_select_letter;
     QWidget *letter_buttons_container;
     QPushButton *pushButton_letter_z;
     QPushButton *pushButton_letter_n;
@@ -64,6 +64,8 @@ public:
     QFrame *frame;
     QLabel *label;
     QListView *listView;
+    QListWidget *listWidget;
+    QPushButton *pushButton_select_letter;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -80,14 +82,11 @@ public:
         MainWindow->setStyleSheet(QString::fromUtf8(""));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-        pushButton_select_letter = new QPushButton(centralWidget);
-        pushButton_select_letter->setObjectName(QString::fromUtf8("pushButton_select_letter"));
-        pushButton_select_letter->setGeometry(QRect(240, 470, 221, 31));
         letter_buttons_container = new QWidget(centralWidget);
         letter_buttons_container->setObjectName(QString::fromUtf8("letter_buttons_container"));
-        letter_buttons_container->setGeometry(QRect(110, 240, 451, 211));
+        letter_buttons_container->setGeometry(QRect(10, 240, 571, 161));
         letter_buttons_container->setStyleSheet(QString::fromUtf8("#letter_buttons_container{\n"
-"	background-color: gray;\n"
+"	border: gray solid 1px;\n"
 "}\n"
 "\n"
 "#letter_buttons_container  *{\n"
@@ -99,13 +98,13 @@ public:
 "}"));
         pushButton_letter_z = new QPushButton(letter_buttons_container);
         pushButton_letter_z->setObjectName(QString::fromUtf8("pushButton_letter_z"));
-        pushButton_letter_z->setGeometry(QRect(230, 160, 40, 40));
+        pushButton_letter_z->setGeometry(QRect(380, 110, 40, 40));
         pushButton_letter_n = new QPushButton(letter_buttons_container);
         pushButton_letter_n->setObjectName(QString::fromUtf8("pushButton_letter_n"));
-        pushButton_letter_n->setGeometry(QRect(280, 60, 40, 40));
+        pushButton_letter_n->setGeometry(QRect(180, 60, 40, 40));
         pushButton_letter_y = new QPushButton(letter_buttons_container);
         pushButton_letter_y->setObjectName(QString::fromUtf8("pushButton_letter_y"));
-        pushButton_letter_y->setGeometry(QRect(180, 160, 40, 40));
+        pushButton_letter_y->setGeometry(QRect(330, 110, 40, 40));
         pushButton_letter_d = new QPushButton(letter_buttons_container);
         pushButton_letter_d->setObjectName(QString::fromUtf8("pushButton_letter_d"));
         pushButton_letter_d->setGeometry(QRect(180, 10, 40, 40));
@@ -117,43 +116,43 @@ public:
         pushButton_letter_f->setGeometry(QRect(280, 10, 40, 40));
         pushButton_letter_q = new QPushButton(letter_buttons_container);
         pushButton_letter_q->setObjectName(QString::fromUtf8("pushButton_letter_q"));
-        pushButton_letter_q->setGeometry(QRect(30, 110, 40, 40));
+        pushButton_letter_q->setGeometry(QRect(330, 60, 40, 40));
         pushButton_letter_m = new QPushButton(letter_buttons_container);
         pushButton_letter_m->setObjectName(QString::fromUtf8("pushButton_letter_m"));
-        pushButton_letter_m->setGeometry(QRect(230, 60, 40, 40));
+        pushButton_letter_m->setGeometry(QRect(130, 60, 40, 40));
         pushButton_letter_r = new QPushButton(letter_buttons_container);
         pushButton_letter_r->setObjectName(QString::fromUtf8("pushButton_letter_r"));
-        pushButton_letter_r->setGeometry(QRect(80, 110, 40, 40));
+        pushButton_letter_r->setGeometry(QRect(380, 60, 40, 40));
         pushButton_letter_s = new QPushButton(letter_buttons_container);
         pushButton_letter_s->setObjectName(QString::fromUtf8("pushButton_letter_s"));
-        pushButton_letter_s->setGeometry(QRect(130, 110, 40, 40));
+        pushButton_letter_s->setGeometry(QRect(430, 60, 40, 40));
         pushButton_letter_c = new QPushButton(letter_buttons_container);
         pushButton_letter_c->setObjectName(QString::fromUtf8("pushButton_letter_c"));
         pushButton_letter_c->setGeometry(QRect(130, 10, 40, 40));
         pushButton_letter_i = new QPushButton(letter_buttons_container);
         pushButton_letter_i->setObjectName(QString::fromUtf8("pushButton_letter_i"));
-        pushButton_letter_i->setGeometry(QRect(30, 60, 40, 40));
+        pushButton_letter_i->setGeometry(QRect(430, 10, 40, 40));
         pushButton_letter_t = new QPushButton(letter_buttons_container);
         pushButton_letter_t->setObjectName(QString::fromUtf8("pushButton_letter_t"));
-        pushButton_letter_t->setGeometry(QRect(180, 110, 40, 40));
+        pushButton_letter_t->setGeometry(QRect(480, 60, 40, 40));
         pushButton_letter_a = new QPushButton(letter_buttons_container);
         pushButton_letter_a->setObjectName(QString::fromUtf8("pushButton_letter_a"));
         pushButton_letter_a->setGeometry(QRect(30, 10, 40, 40));
         pushButton_letter_w = new QPushButton(letter_buttons_container);
         pushButton_letter_w->setObjectName(QString::fromUtf8("pushButton_letter_w"));
-        pushButton_letter_w->setGeometry(QRect(330, 110, 40, 40));
+        pushButton_letter_w->setGeometry(QRect(230, 110, 40, 40));
         pushButton_letter_o = new QPushButton(letter_buttons_container);
         pushButton_letter_o->setObjectName(QString::fromUtf8("pushButton_letter_o"));
-        pushButton_letter_o->setGeometry(QRect(330, 60, 40, 40));
+        pushButton_letter_o->setGeometry(QRect(230, 60, 40, 40));
         pushButton_letter_k = new QPushButton(letter_buttons_container);
         pushButton_letter_k->setObjectName(QString::fromUtf8("pushButton_letter_k"));
-        pushButton_letter_k->setGeometry(QRect(130, 60, 40, 40));
+        pushButton_letter_k->setGeometry(QRect(30, 60, 40, 40));
         pushButton_letter_u = new QPushButton(letter_buttons_container);
         pushButton_letter_u->setObjectName(QString::fromUtf8("pushButton_letter_u"));
-        pushButton_letter_u->setGeometry(QRect(230, 110, 40, 40));
+        pushButton_letter_u->setGeometry(QRect(130, 110, 40, 40));
         pushButton_letter_l = new QPushButton(letter_buttons_container);
         pushButton_letter_l->setObjectName(QString::fromUtf8("pushButton_letter_l"));
-        pushButton_letter_l->setGeometry(QRect(180, 60, 40, 40));
+        pushButton_letter_l->setGeometry(QRect(80, 60, 40, 40));
         pushButton_letter_g = new QPushButton(letter_buttons_container);
         pushButton_letter_g->setObjectName(QString::fromUtf8("pushButton_letter_g"));
         pushButton_letter_g->setGeometry(QRect(330, 10, 40, 40));
@@ -162,23 +161,23 @@ public:
         pushButton_letter_b->setGeometry(QRect(80, 10, 40, 40));
         pushButton_letter_x = new QPushButton(letter_buttons_container);
         pushButton_letter_x->setObjectName(QString::fromUtf8("pushButton_letter_x"));
-        pushButton_letter_x->setGeometry(QRect(380, 110, 40, 40));
+        pushButton_letter_x->setGeometry(QRect(280, 110, 40, 40));
         pushButton_letter_p = new QPushButton(letter_buttons_container);
         pushButton_letter_p->setObjectName(QString::fromUtf8("pushButton_letter_p"));
-        pushButton_letter_p->setGeometry(QRect(380, 60, 40, 40));
+        pushButton_letter_p->setGeometry(QRect(280, 60, 40, 40));
         pushButton_letter_v = new QPushButton(letter_buttons_container);
         pushButton_letter_v->setObjectName(QString::fromUtf8("pushButton_letter_v"));
-        pushButton_letter_v->setGeometry(QRect(280, 110, 40, 40));
+        pushButton_letter_v->setGeometry(QRect(180, 110, 40, 40));
         pushButton_letter_j = new QPushButton(letter_buttons_container);
         pushButton_letter_j->setObjectName(QString::fromUtf8("pushButton_letter_j"));
-        pushButton_letter_j->setGeometry(QRect(80, 60, 40, 40));
+        pushButton_letter_j->setGeometry(QRect(480, 10, 40, 40));
         pushButton_letter_e = new QPushButton(letter_buttons_container);
         pushButton_letter_e->setObjectName(QString::fromUtf8("pushButton_letter_e"));
         pushButton_letter_e->setGeometry(QRect(230, 10, 40, 40));
         pushButton_letter_e->setStyleSheet(QString::fromUtf8(""));
         label_password = new QLabel(centralWidget);
         label_password->setObjectName(QString::fromUtf8("label_password"));
-        label_password->setGeometry(QRect(30, 0, 661, 141));
+        label_password->setGeometry(QRect(10, 110, 571, 101));
         QFont font;
         font.setPointSize(28);
         label_password->setFont(font);
@@ -192,13 +191,13 @@ public:
         label_image->setAlignment(Qt::AlignCenter);
         lineEdit_password_guess = new QLineEdit(centralWidget);
         lineEdit_password_guess->setObjectName(QString::fromUtf8("lineEdit_password_guess"));
-        lineEdit_password_guess->setGeometry(QRect(70, 150, 341, 27));
+        lineEdit_password_guess->setGeometry(QRect(40, 470, 341, 27));
         pushButton_guess_password = new QPushButton(centralWidget);
         pushButton_guess_password->setObjectName(QString::fromUtf8("pushButton_guess_password"));
-        pushButton_guess_password->setGeometry(QRect(410, 150, 151, 27));
+        pushButton_guess_password->setGeometry(QRect(380, 470, 151, 27));
         frame = new QFrame(centralWidget);
         frame->setObjectName(QString::fromUtf8("frame"));
-        frame->setGeometry(QRect(590, 280, 361, 221));
+        frame->setGeometry(QRect(590, 290, 361, 221));
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);
         label = new QLabel(frame);
@@ -208,6 +207,22 @@ public:
         listView = new QListView(frame);
         listView->setObjectName(QString::fromUtf8("listView"));
         listView->setGeometry(QRect(5, 50, 351, 171));
+        listWidget = new QListWidget(centralWidget);
+        listWidget->setObjectName(QString::fromUtf8("listWidget"));
+        listWidget->setGeometry(QRect(10, 10, 571, 81));
+        sizePolicy.setHeightForWidth(listWidget->sizePolicy().hasHeightForWidth());
+        listWidget->setSizePolicy(sizePolicy);
+        listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        listWidget->setAutoScroll(false);
+        listWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        listWidget->setProperty("showDropIndicator", QVariant(false));
+        listWidget->setTextElideMode(Qt::ElideNone);
+        listWidget->setProperty("isWrapping", QVariant(true));
+        listWidget->setSpacing(0);
+        pushButton_select_letter = new QPushButton(centralWidget);
+        pushButton_select_letter->setObjectName(QString::fromUtf8("pushButton_select_letter"));
+        pushButton_select_letter->setGeometry(QRect(170, 410, 221, 31));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -222,7 +237,6 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
-        pushButton_select_letter->setText(QApplication::translate("MainWindow", "Vote for character", 0, QApplication::UnicodeUTF8));
         pushButton_letter_z->setText(QApplication::translate("MainWindow", "Z", 0, QApplication::UnicodeUTF8));
         pushButton_letter_n->setText(QApplication::translate("MainWindow", "N", 0, QApplication::UnicodeUTF8));
         pushButton_letter_y->setText(QApplication::translate("MainWindow", "Y", 0, QApplication::UnicodeUTF8));
@@ -254,6 +268,7 @@ public:
         label_image->setText(QApplication::translate("MainWindow", "image", 0, QApplication::UnicodeUTF8));
         pushButton_guess_password->setText(QApplication::translate("MainWindow", "guess password", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Ranking", 0, QApplication::UnicodeUTF8));
+        pushButton_select_letter->setText(QApplication::translate("MainWindow", "Vote for character", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

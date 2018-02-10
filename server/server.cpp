@@ -53,6 +53,9 @@ int main(int argc, char ** argv){
 
         if(event.events == EPOLLIN){
 
+            cout << "processing " << event.data.fd << endl;
+            cout << " in meantime timefd = " << tfd << endl;
+
             if(event.data.fd == servFd){
                 game.acceptConnection(epollHandler);
 
