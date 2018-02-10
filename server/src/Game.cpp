@@ -165,8 +165,11 @@ void Game::processMessage(int clientFd){
 
 void Game::sendToAll(COMMAND command, string argument){
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
-        it->writeData(command, argument);
+        if(!it->writeData(command, argument)){
+            cout << "[Warning] could not send data to player with fd = " << it->getFd() << endl;
+        };
     }
+
 }
 
 void Game::sendToAll(COMMAND command, int argument) {
@@ -176,7 +179,9 @@ void Game::sendToAll(COMMAND command, int argument) {
 void Game::sendToPlayer(int clientFd, COMMAND command, string argument){
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
         if(it->getFd() == clientFd){
-            it->writeData(command, argument);
+            if(!it->writeData(command, argument)){
+                cout << "[Warning] could not send data to player with fd = " << it->getFd() << endl;
+            };
             return;
         }
     }

@@ -25,10 +25,12 @@ bool Player::writeData(string message) {
     auto ret = write(this->fd, buffer, count);
 
     if(ret==-1) {
-        error(1, errno, "write failed on descriptor %d", fd);
+        //error(1, errno, "write failed on descriptor %d", fd);
+        return false;
     }
     if(ret!=count) {
-        error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
+        //error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
+        return false;
     }
 
     return ret;
