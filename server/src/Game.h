@@ -79,6 +79,8 @@ private:
     void passwordGuess(int clientFd, string password);
     void makeVote(string argument);
 
+    void sendListOfPlayers();
+    void setNickname(int clientFd, string nickname);
     //init stuff
     void setReuseAddr();
 

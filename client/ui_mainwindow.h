@@ -17,7 +17,6 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
-#include <QtGui/QListView>
 #include <QtGui/QListWidget>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenuBar>
@@ -63,7 +62,7 @@ public:
     QPushButton *pushButton_guess_password;
     QFrame *frame;
     QLabel *label;
-    QListView *listView;
+    QListWidget *playerList;
     QListWidget *listWidget;
     QPushButton *pushButton_select_letter;
     QMenuBar *menuBar;
@@ -175,6 +174,32 @@ public:
         pushButton_letter_e->setObjectName(QString::fromUtf8("pushButton_letter_e"));
         pushButton_letter_e->setGeometry(QRect(230, 10, 40, 40));
         pushButton_letter_e->setStyleSheet(QString::fromUtf8(""));
+        pushButton_letter_z->raise();
+        pushButton_letter_n->raise();
+        pushButton_letter_y->raise();
+        pushButton_letter_d->raise();
+        pushButton_letter_h->raise();
+        pushButton_letter_f->raise();
+        pushButton_letter_q->raise();
+        pushButton_letter_m->raise();
+        pushButton_letter_r->raise();
+        pushButton_letter_s->raise();
+        pushButton_letter_c->raise();
+        pushButton_letter_i->raise();
+        pushButton_letter_t->raise();
+        pushButton_letter_a->raise();
+        pushButton_letter_w->raise();
+        pushButton_letter_o->raise();
+        pushButton_letter_k->raise();
+        pushButton_letter_u->raise();
+        pushButton_letter_l->raise();
+        pushButton_letter_g->raise();
+        pushButton_letter_b->raise();
+        pushButton_letter_x->raise();
+        pushButton_letter_p->raise();
+        pushButton_letter_v->raise();
+        pushButton_letter_j->raise();
+        pushButton_letter_e->raise();
         label_password = new QLabel(centralWidget);
         label_password->setObjectName(QString::fromUtf8("label_password"));
         label_password->setGeometry(QRect(10, 110, 571, 101));
@@ -202,11 +227,21 @@ public:
         frame->setFrameShadow(QFrame::Raised);
         label = new QLabel(frame);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(140, 10, 91, 41));
+        label->setGeometry(QRect(110, 10, 151, 41));
         label->setAlignment(Qt::AlignCenter);
-        listView = new QListView(frame);
-        listView->setObjectName(QString::fromUtf8("listView"));
-        listView->setGeometry(QRect(5, 50, 351, 171));
+        playerList = new QListWidget(frame);
+        playerList->setObjectName(QString::fromUtf8("playerList"));
+        playerList->setGeometry(QRect(30, 50, 311, 161));
+        sizePolicy.setHeightForWidth(playerList->sizePolicy().hasHeightForWidth());
+        playerList->setSizePolicy(sizePolicy);
+        playerList->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        playerList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        playerList->setAutoScroll(false);
+        playerList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        playerList->setProperty("showDropIndicator", QVariant(false));
+        playerList->setTextElideMode(Qt::ElideNone);
+        playerList->setProperty("isWrapping", QVariant(true));
+        playerList->setSpacing(0);
         listWidget = new QListWidget(centralWidget);
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
         listWidget->setGeometry(QRect(10, 10, 571, 81));
@@ -267,7 +302,7 @@ public:
         label_password->setText(QString());
         label_image->setText(QApplication::translate("MainWindow", "image", 0, QApplication::UnicodeUTF8));
         pushButton_guess_password->setText(QApplication::translate("MainWindow", "guess password", 0, QApplication::UnicodeUTF8));
-        label->setText(QApplication::translate("MainWindow", "Ranking", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("MainWindow", "List of players", 0, QApplication::UnicodeUTF8));
         pushButton_select_letter->setText(QApplication::translate("MainWindow", "Vote for character", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 

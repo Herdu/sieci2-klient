@@ -41,6 +41,7 @@ private:
     void processAlphabet(QString data);
     void hideLetter(QString letter);
     void logMessage(QString message);
+    void showListOfPlayers(QString names);
 
 private slots:
     void letterPressed();

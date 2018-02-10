@@ -69,7 +69,6 @@ void Game::addPlayer(int fd){
 }
 
 void Game::removePlayer(int fd){
-
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end();) {
         if (it->getFd() == fd){
 
@@ -79,6 +78,8 @@ void Game::removePlayer(int fd){
             close(fd);
 
             cout << "[GAME] Player with fd=" << fd << " has been removed." << endl;
+            this->sendListOfPlayers();
+
             return;
         }
         else
@@ -257,6 +258,8 @@ void Game::processCommand(int clientFd, int command, string argument) {
             break;
         case SET_NICKNAME:
             cout << "[PLAYER] Set nickname '" <<  argument <<"' for player with fd = "<< clientFd << endl;
+            this->setNickname(clientFd, argument);
+            this->sendListOfPlayers();
             break;
         case LETTER_VOTE:
             cout << "[PLAYER] vote for letter" << endl;
@@ -507,5 +510,23 @@ void Game::passwordGuess(int clientFd, string password) {
     }else{
         cout << "bad password" << endl;
         this->sendToPlayer(clientFd, PASSWORD_GUESS_FAILURE, "");
+    }
+}
+
+void Game::sendListOfPlayers() {
+    string names = "";
+    for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); it++) {
+        names += it->getName() + ",";
+    };
+
+    this->sendToAll(LIST_OF_PLAYERS, names);
+}
+
+void Game::setNickname(int clientFd, string nickname) {
+    for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
+        if(it->getFd() == clientFd){
+            it->setName(nickname);
+            return;
+        }
     }
 }

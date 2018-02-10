@@ -283,6 +283,10 @@ void MainWindow::processMessage(int command, QString argument){
         this->game.setPieces(argument.toInt());
         this->drawImage();
         break;
+    case LIST_OF_PLAYERS:
+        this->showListOfPlayers(argument);
+        break;
+
     default:
             qDebug() << "Unknown command: "<< cmd << " : " << argument;
         break;
@@ -417,5 +421,13 @@ void MainWindow::logMessage(QString message){
     this->ui->listWidget->scrollToBottom();
 }
 
+void MainWindow::showListOfPlayers(QString names){
+    QStringList pieces = names.split( "," );
+    pieces.removeLast();
+    qDebug() << pieces;
+    this->ui->playerList->clear();
+    this->ui->playerList->addItems(pieces);
+
+}
 
 

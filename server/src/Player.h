@@ -32,6 +32,7 @@ public:
     int getFd(){return this->fd;}
     void setName(string name){this->name = name;};
     Player(int fd);
+    string getName(){return this->name;};
 
     bool writeData(string message);
     bool writeData(COMMAND command);
