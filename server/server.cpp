@@ -18,7 +18,8 @@
 #include <strings.h>
 #include <string.h>
 #include <vector>
-
+#include<cstdlib>
+#include<ctime>
 
 #include "src/Player.h"
 #include "src/Game.h"
@@ -30,6 +31,8 @@ Game game;
 
 
 int main(int argc, char ** argv){
+
+    std::srand(std::time(0));
 
     if(!game.readConfigFile("config.txt")){
         cout << "Couldn't read config file" <<endl;

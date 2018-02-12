@@ -16,7 +16,9 @@ Player::Player(int fd) {
 
 
 
-bool Player::writeData(string message) {
+bool Player::writeData(int tourId, string message) {
+
+    message = to_string(tourId) + ":" + message;
 
     ssize_t count = message.length();
     char buffer[1024];
@@ -36,16 +38,16 @@ bool Player::writeData(string message) {
     return ret;
 }
 
-bool Player::writeData(COMMAND command){
-    return this->writeData(to_string(command) + ";");
+bool Player::writeData(int tourId, COMMAND command){
+    return this->writeData(tourId, to_string(command) + ";");
 }
 
-bool Player::writeData(COMMAND command, string argument){
-    return this->writeData( to_string(command) + ":" + argument +";");
+bool Player::writeData(int tourId, COMMAND command, string argument){
+    return this->writeData(tourId, to_string(command) + ":" + argument +";");
 }
 
-bool Player::writeData(string argument, COMMAND command){
-    return this->writeData(command, argument);
+bool Player::writeData(int tourId, string argument, COMMAND command){
+    return this->writeData(tourId, command, argument);
 }
 
 

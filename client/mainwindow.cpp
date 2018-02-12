@@ -149,19 +149,23 @@ bool MainWindow::writeData(COMMAND command, QString data)
         QString temp;
 
         if(data == nullptr){
-            temp =  QString::fromStdString(to_string(command)) + ":;";
+            temp = QString::number(this->game.getTourId()) + ":" + QString::fromStdString(to_string(command)) + ":;";
         }else{
-            temp =  QString::fromStdString(to_string(command)) + ":" + data + ";";
+            temp = QString::number(this->game.getTourId()) + ":" + QString::fromStdString(to_string(command)) + ":" + data + ";";
 
         }
 
-        temp =  QString::fromStdString(to_string(command)) + ":" + data + ";";
-        qDebug() << "writing to buffer: " << temp;
+        //temp =  QString::fromStdString(to_string(command)) + ":" + data + ";";
+
+        int numberOfBytes = temp.size(); //number of bytes
+
+        temp = QString::number(numberOfBytes) + ":" + temp;
+
+        qDebug() << temp;
         QByteArray _data = temp.toUtf8();
 
-
         this->pSocket->write(_data); //write the data itself
-        //return this->pSocket->waitForBytesWritten();
+        return this->pSocket->waitForBytesWritten();
 
 
     }
@@ -194,15 +198,25 @@ void MainWindow::readyRead()
             int len =  splitted2.length();
 
             int command;
+            int tourId;
             QString argument;
 
             if(len > 0){
-                command = splitted2[0].toInt();
+                tourId = splitted2[0].toInt();
             }
 
+
             if(len > 1){
-                argument = splitted2[1];
+                command = splitted2[1].toInt();
+
             }
+
+            if(len > 2){
+                argument = splitted2[2];
+
+            }
+
+            this->game.setTourId(tourId);
 
             if(argument == ""){
                 this->processMessage(command);

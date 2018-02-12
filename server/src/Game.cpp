@@ -119,53 +119,58 @@ void Game::removePlayer(int fd){
 void Game::processMessage(int clientFd){
     // read a message
     char buffer[1024];
-    int count = read(clientFd, buffer, 1024);
+    int tempCount = 0;
+    std::stringstream ss;
 
-    if(count < 1) {
-        this->removePlayer(clientFd);
-    } else {
-        char* command_array = strtok(buffer, ";");
+    int sizeOfBuffer =  sizeof(buffer) - 1;
 
-        while(command_array)
-        {
-            char* temp = command_array;
-            command_array = strtok(NULL, ";");
+    tempCount = read(clientFd, buffer, sizeOfBuffer);
 
-            int command_index;
-            string command_argument;
-            int i = 0;
-
-            char* single_cmd_array = strtok(temp, ":");
-
-            while(single_cmd_array) {
-
-                char *temp = single_cmd_array;
-                single_cmd_array = strtok(NULL, ":");
-
-                if (i == 0) {
-                    sscanf(temp, "%d", &command_index);
-                } else if (i == 1) {
-                    command_argument = string(temp);
-                } else {
-                    break;
-                }
-                i++;
-
-            }
-
-
-            cout << "processing command " << command_index << "  " << command_argument << endl;
-            this->processCommand(clientFd, command_index, command_argument);
-
-        }
+    if(tempCount == -1){
+        return;
     }
+    if(tempCount == 0){
+        this->removePlayer(clientFd);
+        return;
+    }
+
+    string input = string(buffer);
+    std::regex rgx("[:;]");
+    std::sregex_token_iterator iter(input.begin(), input.end(), rgx, -1);
+
+    int lengthOfMessage = stoi(*iter++);
+
+    int lengthOfMessageLength = to_string(lengthOfMessage).length();
+
+    lengthOfMessage += lengthOfMessageLength;
+
+    while(lengthOfMessage > (sizeOfBuffer) && tempCount > 0){
+        tempCount = read(clientFd, buffer, sizeOfBuffer);
+        input.append(string(buffer));
+        lengthOfMessage -= (sizeOfBuffer);
+    }
+
+    // structure of message
+    // {length_of_message_in_bytes} : {round_id} : {command} : {argument} ;
+
+    std::sregex_token_iterator iter2(input.begin(), input.end(), rgx, -1);
+    *iter2++; //skip message length
+    int tourId = stoi(string(*iter2++));
+    int cmd = stoi(*iter2++);
+    string argument = *iter2;
+
+    cout << "round id: " <<tourId << endl;
+    cout << "command: " << cmd << endl;
+    cout << "argument: " << argument << endl;
+
+    this->processCommand(clientFd, cmd, argument, tourId );
 
 }
 
 
 void Game::sendToAll(COMMAND command, string argument){
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
-        if(!it->writeData(command, argument)){
+        if(!it->writeData(this->tourId, command, argument)){
             cout << "[Warning] could not send data to player with fd = " << it->getFd() << endl;
         };
     }
@@ -179,7 +184,7 @@ void Game::sendToAll(COMMAND command, int argument) {
 void Game::sendToPlayer(int clientFd, COMMAND command, string argument){
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
         if(it->getFd() == clientFd){
-            if(!it->writeData(command, argument)){
+            if(!it->writeData(this->tourId, command, argument)){
                 cout << "[Warning] could not send data to player with fd = " << it->getFd() << endl;
             };
             return;
@@ -199,7 +204,7 @@ void Game::acceptConnection(int epollHandler){
 
     // accept new connection
     auto clientFd = accept(this->fd, (sockaddr*) &clientAddr, &clientAddrSize);
-    if(clientFd == -1) error(1, errno, "accept failed");
+    if(clientFd == -1) return; //error(1, errno, "accept failed");
 
     // tell who has connected
     printf("[SERVER] new connection from: %s:%hu (fd = %d)\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), clientFd);
@@ -277,7 +282,7 @@ void Game::processGameTimeout() {
 }
 
 
-void Game::processCommand(int clientFd, int command, string argument) {
+void Game::processCommand(int clientFd, int command, string argument, int tourId) {
 
     COMMAND cmd = static_cast<COMMAND>(command);
     switch (cmd){
@@ -294,10 +299,18 @@ void Game::processCommand(int clientFd, int command, string argument) {
             this->sendListOfPlayers();
             break;
         case LETTER_VOTE:
+            if(tourId != this->tourId){
+                cout << "[PLAYER] Wrong tour id: '" <<  tourId <<"' for player with fd = "<< clientFd << ". Current tour id is : " << this->tourId << endl;
+                return;
+            }
             cout << "[PLAYER] vote for letter" << endl;
             this->makeVote(argument);
             break;
         case PASSWORD_GUESS:
+            if(tourId != this->tourId){
+                cout << "[PLAYER] Wrong tour id: '" <<  tourId <<"' for player with fd = "<< clientFd << ". Current tour id is : " << this->tourId << endl;
+                return;
+            }
             cout << "[PLAYER] password guess" << endl;
             this->passwordGuess(clientFd, argument);
             break;
@@ -363,7 +376,7 @@ void Game::start(){
     this->currentPassword = dictionary[temp];
     string currentMask = this->currentPassword;
 
-    for(int i=0; i<this->currentPassword.length(); i++){
+    for(unsigned i=0; i<this->currentPassword.length(); i++){
         if(this->currentPassword[i] == ' ')
         {
             currentMask[i] = ' ';
@@ -385,11 +398,11 @@ void Game::start(){
 
 void Game::showLetter(char letter) {
     int count = 0;
-    int hiddenCount = 0;
+    unsigned hiddenCount = 0;
     string password = this->currentPassword;
     string mask = this->currentMask;
 
-    for (int i = 0; i < password.size(); i++)
+    for (unsigned i = 0; i < password.size(); i++)
     {
         if (tolower(password[i]) == letter){
             mask[i] = ' ';
@@ -489,6 +502,9 @@ void Game::endOfTour() {
     this->showLetter(winner.character);
 
     cout<<"[GAME] next tour" << endl;
+
+    this->tourId = rand() % 1000;
+
     this->setGameTimeout(15, NEXT_TOUR);
     this->sendToAll(NEXT_TOUR, " ");
 

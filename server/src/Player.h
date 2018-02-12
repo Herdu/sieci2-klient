@@ -34,10 +34,10 @@ public:
     Player(int fd);
     string getName(){return this->name;};
 
-    bool writeData(string message);
-    bool writeData(COMMAND command);
-    bool writeData(COMMAND command, string message);
-    bool writeData(string message, COMMAND command);
+    bool writeData(int tourId, string message);
+    bool writeData(int tourId, COMMAND command);
+    bool writeData(int tourId, COMMAND command, string message);
+    bool writeData(int tourId, string message, COMMAND command);
 };
 
 

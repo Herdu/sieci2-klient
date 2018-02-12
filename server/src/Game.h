@@ -29,6 +29,10 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <regex>
+#include<cstdlib>
+#include<ctime>
 
 #include "Player.h"
 #include "commands.h"
@@ -50,7 +54,8 @@ private:
     string currentPassword;
     string currentMask;
 
-    int playerLimit = 2;
+    int tourId;
+    int playerLimit = 10;
 
     int fd; //server socket id
     int timeFd; //time id
@@ -67,7 +72,7 @@ private:
     void sendToAll(COMMAND command, int argument);
     void sendToPlayer(int clientFd,COMMAND command, string argument );
     void sendToPlayer(int clientFd,COMMAND command, int argument );
-    void processCommand(int clientFd, int command, string argument);
+    void processCommand(int clientFd, int command, string argument, int roundId);
     void showLetter(char letter);
     void endOfRound();
     void endOfTour();

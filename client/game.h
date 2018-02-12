@@ -10,6 +10,7 @@ private:
     QString currentPassword;
     QString currentMask;
     int numberOfPieces;
+    int tourId;
 
 public:
     Game();
@@ -20,6 +21,8 @@ public:
     void setMask(QString mask){this->currentMask = mask;}
     void addPiece(){this->numberOfPieces++;}
     void setPieces(int pieces){this->numberOfPieces = pieces;}
+    void setTourId(int tourId) {this->tourId = tourId;}
+    int getTourId(){return this->tourId;}
 };
 
 #endif // GAME_H
