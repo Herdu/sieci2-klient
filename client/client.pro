@@ -14,10 +14,13 @@ QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    game.cpp
+    game.cpp \
+    loading.cpp
 
 HEADERS  += mainwindow.h \
     commands.h \
-    game.h
+    game.h \
+    loading.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    loading.ui

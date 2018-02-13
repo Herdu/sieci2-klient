@@ -199,16 +199,13 @@ void MainWindow::readyRead()
 
             int command;
             int tourId;
-            QString argument;
-
-            if(len > 0){
-                tourId = splitted2[0].toInt();
-            }
-
+            QString argument = "";
 
             if(len > 1){
+                tourId = splitted2[0].toInt();
                 command = splitted2[1].toInt();
-
+            }else{
+                return;
             }
 
             if(len > 2){
@@ -263,6 +260,7 @@ void MainWindow::processMessage(int command, QString argument){
             qDebug() << "NEW PASSWORD: ";
             this->game.setNewPassword(argument);
             this->prepareNewGame();
+            this->logMessage("New password!");
         break;
     case SEND_MASK:
         this->game.setMask(argument);
@@ -286,6 +284,8 @@ void MainWindow::processMessage(int command, QString argument){
 
        this->drawImage();
        this->isKeyboardBlocked = false;
+       this->logMessage("Next tour!");
+
         break;
 
     case SEND_ALPHABET:

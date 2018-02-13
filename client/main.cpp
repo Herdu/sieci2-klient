@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "loading.h"
 #include "commands.h"
 #include <QApplication>
 #include <cstdlib>
@@ -9,18 +10,16 @@
 #include <error.h>
 #include <netdb.h>
 #include <sys/epoll.h>
-
-
+#include <QMessageBox>
+#include <QProgressDialog>
 
 int main(int argc, char *argv[])
 {
-
+    QApplication a(argc, argv);
     QString nick = "Albert Einstein";
     QString port = "12345";
     QString address = "127.0.0.1";
 
-
-    QApplication a(argc, argv);
     MainWindow window;
 
     if(window.connectTcp(address,port, nick)){
@@ -28,7 +27,9 @@ int main(int argc, char *argv[])
         window.show();
     }
     else{
-        cout <<"couldn't connect to the server" <<endl;
+        QMessageBox msgBox;
+        msgBox.setText("Could not connect to the server. Please try again later.");
+        msgBox.exec();
     }
     return a.exec();
 }
