@@ -18,17 +18,11 @@ Player::Player(int fd) {
 
 
 bool Player::writeData(string message) {
-
-    message = message + "%";
+    message = message + "%"; //end of msg sign
 
     ssize_t count = message.length();
     char buffer[message.size()];
     strcpy(buffer, message.c_str());
-
-    cout << "buffer: " <<  buffer <<endl;
-
-
-
 
     int total = 0;        // how many bytes we've sent
     int bytesleft = count; // how many we have left to send
@@ -37,10 +31,10 @@ bool Player::writeData(string message) {
 
     while(total < count) {
 
-        if(count - total < 128){
+        if(count - total <  512){
             bytesToWriteNow = count - total;
         }else{
-            bytesToWriteNow = 128;
+            bytesToWriteNow = 512;
         }
 
         n = send(this->fd, buffer + total, bytesToWriteNow, MSG_CONFIRM);

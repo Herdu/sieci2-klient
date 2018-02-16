@@ -195,8 +195,6 @@ void MainWindow::readyRead()
         }
     }
 
-    qDebug() << "raw msg: "<< message;
-
     QStringList splitted = message.replace("%", "").split(";");
 
     for(int i=0; i<splitted.length(); i++){
