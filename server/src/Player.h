@@ -16,8 +16,10 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <string.h>
+#include <vector>
 
 #include "commands.h"
+#include "struct.h"
 
 using namespace std;
 
@@ -26,7 +28,7 @@ class Player{
     int fd;
     int points;
 private:
-
+    bool writeData(string message);
 
 public:
     int getFd(){return this->fd;}
@@ -34,10 +36,8 @@ public:
     Player(int fd);
     string getName(){return this->name;};
 
-    bool writeData(int tourId, string message);
-    bool writeData(int tourId, COMMAND command);
-    bool writeData(int tourId, COMMAND command, string message);
-    bool writeData(int tourId, string message, COMMAND command);
+    bool writeData(int tourId, CMD_STRUCT);
+    bool writeData(int tourId, vector< CMD_STRUCT > args);
 };
 
 

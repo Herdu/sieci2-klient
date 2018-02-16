@@ -147,6 +147,8 @@ bool MainWindow::writeData(COMMAND command, QString data)
 
         QString temp;
 
+        data = data.replace(":", "").replace(";","").replace("%", "");
+
         if(data == nullptr){
             temp = QString::number(this->game.getTourId()) + ":" + QString::fromStdString(to_string(command)) + ":;";
         }else{
@@ -184,15 +186,23 @@ void MainWindow::disconnected()
 
 void MainWindow::readyRead()
 {
-    QString message;
+    QString message = "";
+    while(1){
+        message += this->pSocket->readAll();
 
-    message = this->pSocket->readAll();
+        if (message.at(message.size() - 1) == '%'){
+            break;
+        }
+    }
 
-    QStringList splitted = message.split(";");
+    qDebug() << "raw msg: "<< message;
+
+    QStringList splitted = message.replace("%", "").split(";");
 
     for(int i=0; i<splitted.length(); i++){
 
-        if(splitted[i] != ""){
+        if(splitted[i] != " " && splitted[i] != "%" && splitted[i] != ""){            
+
             QStringList splitted2 = splitted[i].split(":");
 
             int len =  splitted2.length();
@@ -215,7 +225,7 @@ void MainWindow::readyRead()
 
             this->game.setTourId(tourId);
 
-            if(argument == ""){
+            if(argument == "" || argument == " "){
                 this->processMessage(command);
             }else{
                 this->processMessage(command, argument);
@@ -246,8 +256,25 @@ void MainWindow::processMessage(int command){
     case ROUND_LOST:
             logMessage("Round lost :(");
         break;
+
+    case NEXT_TOUR:
+       this->resetKeyboard();
+
+       //remove active class from all letter buttons
+       for(int i=0; i < this->letterButtons.length(); i++){
+           QPushButton* button = qobject_cast<QPushButton*>(this->letterButtons[i]);
+           button->setProperty( "class", QString::fromStdString(""));
+           button->setStyleSheet("");
+       }
+
+       this->drawImage();
+       this->isKeyboardBlocked = false;
+       this->logMessage("Next tour!");
+
+        break;
+
     default:
-            qDebug() << "Unknown command without argument";
+            qDebug() << "Unknown command " << cmd << "without argument ";
         break;
     }
 
@@ -272,22 +299,6 @@ void MainWindow::processMessage(int command, QString argument){
     case SEND_LETTER:
         this->hideLetter(argument);
         this->logMessage("Letter '" + argument + "' won the voting.");
-        break;
-
-    case NEXT_TOUR:
-       this->resetKeyboard();
-
-       //remove active class from all letter buttons
-       for(int i=0; i < this->letterButtons.length(); i++){
-           QPushButton* button = qobject_cast<QPushButton*>(this->letterButtons[i]);
-           button->setProperty( "class", QString::fromStdString(""));
-           button->setStyleSheet("");
-       }
-
-       this->drawImage();
-       this->isKeyboardBlocked = false;
-       this->logMessage("Next tour!");
-
         break;
 
     case SEND_ALPHABET:

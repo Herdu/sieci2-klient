@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int TOUR_LENGTH = 3; //sec
+int TOUR_LENGTH = 10; //sec
 
 bool Game::readConfigFile(const char* filename) {
 
@@ -170,23 +170,26 @@ void Game::processMessage(int clientFd){
 }
 
 
-void Game::sendToAll(COMMAND command, string argument){
+void Game::sendToAll(CMD_STRUCT cmdStruct){
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
-        if(!it->writeData(this->tourId, command, argument)){
+        if(!it->writeData(this->tourId, cmdStruct)){
             cout << "[Warning] could not send data to player with fd = " << it->getFd() << endl;
         };
     }
-
 }
 
-void Game::sendToAll(COMMAND command, int argument) {
-    this->sendToAll(command, to_string(argument));
+void Game::sendToAll(vector<CMD_STRUCT> args){
+    for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
+        if(!it->writeData(this->tourId, args)){
+            cout << "[Warning] could not send data to player with fd = " << it->getFd() << endl;
+        };
+    }
 }
 
-void Game::sendToPlayer(int clientFd, COMMAND command, string argument){
+void Game::sendToPlayer(int clientFd, vector<CMD_STRUCT> args){
     for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
         if(it->getFd() == clientFd){
-            if(!it->writeData(this->tourId, command, argument)){
+            if(!it->writeData(this->tourId, args)){
                 cout << "[Warning] could not send data to player with fd = " << it->getFd() << endl;
             };
             return;
@@ -194,8 +197,15 @@ void Game::sendToPlayer(int clientFd, COMMAND command, string argument){
     }
 }
 
-void Game::sendToPlayer(int clientFd, COMMAND command, int argument){
-    this->sendToPlayer(clientFd, command, to_string(argument));
+void Game::sendToPlayer(int clientFd, CMD_STRUCT cmdStruct){
+    for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); ++it) {
+        if(it->getFd() == clientFd){
+            if(!it->writeData(this->tourId, cmdStruct)){
+                cout << "[Warning] could not send data to player with fd = " << it->getFd() << endl;
+            };
+            return;
+        }
+    }
 }
 
 
@@ -214,7 +224,7 @@ void Game::acceptConnection(int epollHandler){
     this->addPlayer(clientFd);
 
     epoll_event event;
-    event.events = EPOLLIN;
+    event.events = EPOLLIN | EPOLLET;
     event.data.fd = clientFd;
 
     epoll_ctl(epollHandler, EPOLL_CTL_ADD, clientFd, &event);
@@ -260,13 +270,15 @@ void Game::processGameTimeout() {
 
     uint64_t value;
     read(this->timeFd, &value, 8);
+    CMD_STRUCT cmdStruct;
 
     switch(this->timeoutCommand){
         case END_OF_ROUND:
             cout << "[TIMEOUT] End of round." << endl;
             this->timeoutCommand = NOTHING;
-            //TODO PRZELICZENIE GLOSOW
-            this->sendToAll(END_OF_ROUND," ");
+            cmdStruct.cmd = END_OF_ROUND;
+            cmdStruct.arg = " ";
+            this->sendToAll(cmdStruct);
             break;
 
         case NEW_PASSWORD:
@@ -287,19 +299,38 @@ void Game::processGameTimeout() {
 void Game::processCommand(int clientFd, int command, string argument, int tourId) {
 
     COMMAND cmd = static_cast<COMMAND>(command);
+    CMD_STRUCT newPassword, sendMask, sendPieces, sendAlphabet;
+    vector<CMD_STRUCT> commandsToPlayer;
+
     switch (cmd){
         case GET_PASSWORD:
             cout << "[PLAYER] player " << clientFd <<" asked for password with mask" << endl;
-            this->sendToPlayer(clientFd, NEW_PASSWORD, this->currentPassword);
-            this->sendToPlayer(clientFd, SEND_MASK, this->currentMask);
-            this->sendAlphabetToPlayer(clientFd);
-            this->sendToPlayer(clientFd, SEND_PIECES, this->numberOfPieces);
+
+            newPassword.cmd = NEW_PASSWORD;
+            newPassword.arg = this->currentPassword;
+            commandsToPlayer.push_back(newPassword);
+
+            sendMask.cmd = SEND_MASK;
+            sendMask.arg = this->currentMask;
+            commandsToPlayer.push_back(sendMask);
+
+            sendPieces.cmd = SEND_PIECES;
+            sendPieces.arg = to_string(this->numberOfPieces);
+            commandsToPlayer.push_back(sendPieces);
+
+            sendAlphabet.cmd = SEND_ALPHABET;
+            sendAlphabet.arg = this->getAlphabet();
+            commandsToPlayer.push_back(sendAlphabet);
+
+            this->sendToPlayer(clientFd, commandsToPlayer);
             break;
+
         case SET_NICKNAME:
             cout << "[PLAYER] Set nickname '" <<  argument <<"' for player with fd = "<< clientFd << endl;
             this->setNickname(clientFd, argument);
             this->sendListOfPlayers();
             break;
+
         case LETTER_VOTE:
             if(tourId != this->tourId){
                 cout << "[PLAYER] Wrong tour id: '" <<  tourId <<"' for player with fd = "<< clientFd << ". Current tour id is : " << this->tourId << endl;
@@ -391,7 +422,12 @@ void Game::start(){
     cout << "[GAME] Current password is: " << currentPassword << endl;
 
     //new_password means begin of first tour in the round
-    this->sendToAll(NEW_PASSWORD, currentPassword);
+
+    CMD_STRUCT newPassword;
+    newPassword.cmd = NEW_PASSWORD;
+    newPassword.arg = currentPassword;
+
+    this->sendToAll(newPassword);
 
     //next tour every 15sec
     this->setGameTimeout(TOUR_LENGTH, NEXT_TOUR);
@@ -420,10 +456,19 @@ void Game::showLetter(char letter) {
     if(count > 0){
         cout << "[GAME] Letter " << letter << " is in password! "<< endl;
         this->currentMask = mask;
-        this->sendToAll(SEND_MASK, this->currentMask);
+
+        CMD_STRUCT newMask;
+        newMask.cmd = SEND_MASK;
+        newMask.arg = this->currentMask;
+        this->sendToAll(newMask);
     }else{
         cout << "[GAME] Letter " << letter << " is not in password."<< endl;
         this->numberOfPieces++;
+
+        CMD_STRUCT sendPieces;
+        sendPieces.cmd = SEND_PIECES;
+        sendPieces.arg = to_string(this->numberOfPieces);
+        this->sendToAll(sendPieces);
 
         if(this->numberOfPieces>9){
             this->roundLost();
@@ -431,19 +476,11 @@ void Game::showLetter(char letter) {
         }
 
     }
-    if(letter){
-        string l = "";
-        l += letter;
 
-        if(l.length() > 0){
-
-
-
-            this->sendToAll(SEND_LETTER, l);
-        }
-    }
-    this->sendToAll(SEND_PIECES, this->numberOfPieces);
-
+    CMD_STRUCT sendPieces;
+    sendPieces.cmd = SEND_PIECES;
+    sendPieces.arg = to_string(this->numberOfPieces);
+    this->sendToAll(sendPieces);
 
     if(hiddenCount == password.size()){
         this->endOfRound();
@@ -462,7 +499,12 @@ void Game::showLetter(char letter) {
 void Game::endOfRound(){
     cout << "[GAME] End of round! " << endl;
     this->setGameTimeout(3, NEW_PASSWORD);
-    this->sendToAll(SEND_PIECES, this->numberOfPieces);
+
+    CMD_STRUCT sendPieces;
+    sendPieces.cmd = SEND_PIECES;
+    sendPieces.arg = to_string(this->numberOfPieces);
+    this->sendToAll(sendPieces);
+
     this->resetAlphabet();
 
 
@@ -519,8 +561,20 @@ void Game::endOfTour() {
     this->tourId = rand() % 1000;
 
     this->setGameTimeout(TOUR_LENGTH, NEXT_TOUR);
-    this->sendToAll(NEXT_TOUR, " ");
 
+    vector < CMD_STRUCT > commandsToAll;
+
+    CMD_STRUCT sendLetter;
+    sendLetter.cmd = SEND_LETTER;
+    sendLetter.arg = string(1, winner.character);
+    commandsToAll.push_back(sendLetter);
+
+    CMD_STRUCT nextTour;
+    nextTour.cmd = NEXT_TOUR;
+    nextTour.arg = " ";
+    commandsToAll.push_back(nextTour);
+
+    this->sendToAll(commandsToAll);
 }
 
 
@@ -538,15 +592,11 @@ string Game::getAlphabet(){
     return data;
 }
 
-
-void Game::sendAlphabetToPlayer(int clientFd){
-    string data = this->getAlphabet();
-    this->sendToPlayer(clientFd, SEND_ALPHABET, data);
-}
-
 void Game::sendAlphabet(){
-    string data = this->getAlphabet();
-    this->sendToAll(SEND_ALPHABET, data);
+    CMD_STRUCT sendAlphabet;
+    sendAlphabet.cmd = SEND_ALPHABET;
+    sendAlphabet.arg = this->getAlphabet();
+    this->sendToAll(sendAlphabet);
 }
 
 void Game::resetAlphabet() {
@@ -559,26 +609,40 @@ void Game::resetAlphabet() {
 
 void Game::roundLost(){
     this->tourId = -1;
-    this->sendToAll(ROUND_LOST,"");
+
+    CMD_STRUCT lost;
+    lost.cmd = ROUND_LOST;
+    lost.arg = " ";
+    this->sendToAll(lost);
+
     this->start();
 }
 
 void Game::passwordGuess(int clientFd, string password) {
-
 
     if(password == this->currentPassword){
         cout << "password guessed!" << endl;
         string playerName;
         for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); it++) {
             if((it->getFd() == clientFd)){
-                this->sendToAll(WINNER, "Player " + it->getName() + " guessed the password!");
+
+                CMD_STRUCT cmdStruct;
+                cmdStruct.cmd = WINNER;
+                cmdStruct.arg = "Player " + it->getName() + " guessed the password!";
+
+                this->sendToAll(cmdStruct);
             }
         };
 
         this->endOfRound();
     }else{
         cout << "bad password" << endl;
-        this->sendToPlayer(clientFd, PASSWORD_GUESS_FAILURE, "");
+
+        CMD_STRUCT bad;
+        bad.cmd = PASSWORD_GUESS_FAILURE;
+        bad.arg = " ";
+
+        this->sendToPlayer(clientFd, bad);
     }
 }
 
@@ -588,7 +652,11 @@ void Game::sendListOfPlayers() {
         names += it->getName() + ",";
     };
 
-    this->sendToAll(LIST_OF_PLAYERS, names);
+    CMD_STRUCT list;
+    list.cmd = LIST_OF_PLAYERS;
+    list.arg = names;
+
+    this->sendToAll(list);
 }
 
 void Game::setNickname(int clientFd, string nickname) {

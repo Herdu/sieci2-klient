@@ -31,11 +31,12 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
-#include<cstdlib>
-#include<ctime>
+#include <cstdlib>
+#include <ctime>
 
 #include "Player.h"
 #include "commands.h"
+#include "struct.h"
 
 using namespace std;
 
@@ -68,10 +69,10 @@ private:
     int numberOfPieces;
 
     void removePlayer(int fd);
-    void sendToAll(COMMAND command, string argument);
-    void sendToAll(COMMAND command, int argument);
-    void sendToPlayer(int clientFd,COMMAND command, string argument );
-    void sendToPlayer(int clientFd,COMMAND command, int argument );
+    void sendToAll(CMD_STRUCT cmdStruct);
+    void sendToAll(vector <CMD_STRUCT> args);
+    void sendToPlayer(int clientFd, CMD_STRUCT cmdStruct);
+    void sendToPlayer(int clientFd, vector <CMD_STRUCT> args);
     void processCommand(int clientFd, int command, string argument, int roundId);
     void showLetter(char letter);
     void endOfRound();

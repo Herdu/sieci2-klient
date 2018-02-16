@@ -2,6 +2,7 @@
 // Created by root on 23.12.17.
 //
 #include "Player.h"
+#include "struct.h"
 
 using namespace std;
 
@@ -16,39 +17,60 @@ Player::Player(int fd) {
 
 
 
-bool Player::writeData(int tourId, string message) {
+bool Player::writeData(string message) {
 
-    message = to_string(tourId) + ":" + message;
+    message = message + "%";
 
     ssize_t count = message.length();
-    char buffer[1024];
+    char buffer[message.size()];
     strcpy(buffer, message.c_str());
 
-    auto ret = write(this->fd, buffer, count);
+    cout << "buffer: " <<  buffer <<endl;
 
-    if(ret==-1) {
-        //error(1, errno, "write failed on descriptor %d", fd);
-        return false;
+
+
+
+    int total = 0;        // how many bytes we've sent
+    int bytesleft = count; // how many we have left to send
+    int n, bytesToWriteNow;
+
+
+    while(total < count) {
+
+        if(count - total < 128){
+            bytesToWriteNow = count - total;
+        }else{
+            bytesToWriteNow = 128;
+        }
+
+        n = send(this->fd, buffer + total, bytesToWriteNow, MSG_CONFIRM);
+
+
+        if (n == -1) { break; }
+        total += n;
+        bytesleft -= n;
     }
-    if(ret!=count) {
-        //error(0, errno, "wrote less than requested to descriptor %d (%ld/%ld)", fd, count, ret);
-        return false;
+
+    return n !=-1; // return -1 on failure, 0 on success
+
+
+}
+
+bool Player::writeData(int tourId, CMD_STRUCT cmdStruct){
+    return this->writeData(to_string(tourId) + ":" + to_string(cmdStruct.cmd) + ":" + cmdStruct.arg + ";");
+}
+
+bool Player::writeData(int tourId, vector< CMD_STRUCT > args){
+
+    string message = "";
+
+    for(vector<CMD_STRUCT>::iterator it = args.begin(); it != args.end(); ++it) {
+
+        message = message + to_string(tourId) + ":" + to_string(it->cmd) + ":" + it->arg + ";";
     }
 
-    return ret;
-}
-
-bool Player::writeData(int tourId, COMMAND command){
-    return this->writeData(tourId, to_string(command) + ";");
-}
-
-bool Player::writeData(int tourId, COMMAND command, string argument){
-    return this->writeData(tourId, to_string(command) + ":" + argument +";");
-}
-
-bool Player::writeData(int tourId, string argument, COMMAND command){
-    return this->writeData(tourId, command, argument);
-}
+    return this->writeData(message);
+};
 
 
 

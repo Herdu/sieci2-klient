@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
         msgBox.exec();
         return 1;
     }
-    QString nick = QString::fromUtf8(argv[1]);
+    QString nick = QString::fromUtf8(argv[1]).replace(";", "").replace(":", "").replace("%", "");
     if(nick.length() < 3 || nick.length() > 16){
         QMessageBox msgBox;
         msgBox.setText("Nickname length must be between 3 and 16 characters!");
