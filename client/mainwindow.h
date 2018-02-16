@@ -6,6 +6,11 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QColor>
+#include <QMessageBox>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
 #include "commands.h"
 #include "game.h"
 
@@ -21,7 +26,8 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    bool connectTcp(QString address, QString port, QString nick);
+    bool connectTcp(QString nick);
+    bool readConfigFile(const char* filename);
     void init();
     ~MainWindow();
 
@@ -32,6 +38,10 @@ private:
     void resetKeyboard();
     void drawImage();
     Game game;
+
+
+    QString port;
+    QString address;
 
     bool isKeyboardBlocked;
 

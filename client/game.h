@@ -3,6 +3,10 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <qdebug.h>
+#include <iostream>
+#include <string>
+
+using namespace std;
 
 class Game
 {
@@ -23,6 +27,7 @@ public:
     void setPieces(int pieces){this->numberOfPieces = pieces;}
     void setTourId(int tourId) {this->tourId = tourId;}
     int getTourId(){return this->tourId;}
+
 };
 
 #endif // GAME_H

@@ -1,5 +1,7 @@
 #include "game.h"
 
+using namespace std;
+
 Game::Game()
 {
     this->numberOfPieces = 0;
@@ -8,7 +10,6 @@ Game::Game()
 
 void Game::setNewPassword(QString password){
 
-   qDebug() << "password: "<< password;
    this->currentPassword = password;
    QString mask = "";
 
@@ -21,7 +22,6 @@ void Game::setNewPassword(QString password){
         }
     }
     this->currentMask = mask;
-     qDebug() << "mask    " << this->currentMask;
 }
 
 
@@ -45,3 +45,5 @@ QString Game::getPassword(){
 
     return  _password;
 }
+
+

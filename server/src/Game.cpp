@@ -7,6 +7,8 @@
 
 using namespace std;
 
+int TOUR_LENGTH = 3; //sec
+
 bool Game::readConfigFile(const char* filename) {
 
     string line, dummyLine;
@@ -392,7 +394,7 @@ void Game::start(){
     this->sendToAll(NEW_PASSWORD, currentPassword);
 
     //next tour every 15sec
-    this->setGameTimeout(15, NEXT_TOUR);
+    this->setGameTimeout(TOUR_LENGTH, NEXT_TOUR);
 
 }
 
@@ -425,6 +427,7 @@ void Game::showLetter(char letter) {
 
         if(this->numberOfPieces>9){
             this->roundLost();
+            return;
         }
 
     }
@@ -497,6 +500,16 @@ void Game::endOfTour() {
         }
     }
 
+    if(max == 0){
+        while(1){
+            int tmp = rand()%this->alphabet.size();
+            if(this->alphabet[tmp].isVisible){
+                winner = alphabet[tmp];
+                break;
+            }
+        }
+    }
+
     cout << "[GAME] vote winner: "<< winner.character << endl;
 
     this->showLetter(winner.character);
@@ -505,7 +518,7 @@ void Game::endOfTour() {
 
     this->tourId = rand() % 1000;
 
-    this->setGameTimeout(15, NEXT_TOUR);
+    this->setGameTimeout(TOUR_LENGTH, NEXT_TOUR);
     this->sendToAll(NEXT_TOUR, " ");
 
 }
@@ -545,6 +558,8 @@ void Game::resetAlphabet() {
 }
 
 void Game::roundLost(){
+    this->tourId = -1;
+    this->sendToAll(ROUND_LOST,"");
     this->start();
 }
 
@@ -553,7 +568,13 @@ void Game::passwordGuess(int clientFd, string password) {
 
     if(password == this->currentPassword){
         cout << "password guessed!" << endl;
-        this->sendToPlayer(clientFd, PASSWORD_GUESS_SUCCESS, "");
+        string playerName;
+        for(vector<Player>::iterator it = this->player.begin(); it != this->player.end(); it++) {
+            if((it->getFd() == clientFd)){
+                this->sendToAll(WINNER, "Player " + it->getName() + " guessed the password!");
+            }
+        };
+
         this->endOfRound();
     }else{
         cout << "bad password" << endl;

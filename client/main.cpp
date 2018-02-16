@@ -16,13 +16,33 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QString nick = "Albert Einstein";
-    QString port = "12345";
-    QString address = "127.0.0.1";
+
+    //VALIDATE NICKANAME PASSED IN ARGUMENT
+    if(argc < 2){
+        QMessageBox msgBox;
+        msgBox.setText("Please provide your nickname as first argument of the program");
+        msgBox.exec();
+        return 1;
+    }
+    QString nick = QString::fromUtf8(argv[1]);
+    if(nick.length() < 3 || nick.length() > 16){
+        QMessageBox msgBox;
+        msgBox.setText("Nickname length must be between 3 and 16 characters!");
+        msgBox.exec();
+        return 1;
+    }
 
     MainWindow window;
 
-    if(window.connectTcp(address,port, nick)){
+    if(!window.readConfigFile("config.txt")){ //read address and port from config file
+        QMessageBox msgBox;
+        msgBox.setText("Could not properly read config file!");
+        msgBox.exec();
+        return 1;
+    }
+
+
+    if(window.connectTcp(nick)){
         window.init();
         window.show();
     }

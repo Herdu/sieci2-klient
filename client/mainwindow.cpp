@@ -3,6 +3,8 @@
 #include <qdebug.h>
 #include <unistd.h>
 
+using namespace std;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -10,8 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->letterButtons = ui->letter_buttons_container->children();
-
-
 
     connect(ui->pushButton_letter_a, SIGNAL(released()), this, SLOT(letterPressed()));
     connect(ui->pushButton_letter_b, SIGNAL(released()), this, SLOT(letterPressed()));
@@ -83,7 +83,6 @@ void MainWindow::letterSelected()
     this->writeData(LETTER_VOTE, letter);
     this->resetKeyboard();
     this->isKeyboardBlocked = true;
-    qDebug() << letter;
 }
 
 void MainWindow::resetKeyboard()
@@ -99,14 +98,14 @@ void MainWindow::resetKeyboard()
 }
 
 
-bool MainWindow::connectTcp (QString address, QString port, QString nick)
+bool MainWindow::connectTcp (QString nick)
 {
     //convert port to quint16
-    QTextStream ts(&port);
+    QTextStream ts(&this->port);
     quint16 num = 0;
     ts >> num;
 
-    QHostAddress _address(address);
+    QHostAddress _address(this->address);
     quint16 _port(num);
 
     QByteArray data; // <-- fill with data
@@ -161,7 +160,6 @@ bool MainWindow::writeData(COMMAND command, QString data)
 
         temp = QString::number(numberOfBytes) + ":" + temp;
 
-        qDebug() << temp;
         QByteArray _data = temp.toUtf8();
 
         this->pSocket->write(_data); //write the data itself
@@ -176,14 +174,16 @@ bool MainWindow::writeData(COMMAND command, QString data)
 
 void MainWindow::disconnected()
 {
-    qDebug() << "disconnected...";
+
+    QMessageBox msgBox;
+    msgBox.setText("Disconnected from the server.");
+    msgBox.exec();
+
     exit(1);
 }
 
 void MainWindow::readyRead()
 {
-    qDebug() << "reading message from server";
-
     QString message;
 
     message = this->pSocket->readAll();
@@ -243,6 +243,9 @@ void MainWindow::processMessage(int command){
     case SERVER_OVERLOAD:
             qDebug() << "SERVER OVERLOAD";
         break;
+    case ROUND_LOST:
+            logMessage("Round lost :(");
+        break;
     default:
             qDebug() << "Unknown command without argument";
         break;
@@ -257,10 +260,9 @@ void MainWindow::processMessage(int command, QString argument){
 
     switch(cmd){
     case NEW_PASSWORD:
-            qDebug() << "NEW PASSWORD: ";
             this->game.setNewPassword(argument);
             this->prepareNewGame();
-            this->logMessage("New password!");
+            this->logMessage("Current password set.");
         break;
     case SEND_MASK:
         this->game.setMask(argument);
@@ -269,10 +271,10 @@ void MainWindow::processMessage(int command, QString argument){
 
     case SEND_LETTER:
         this->hideLetter(argument);
+        this->logMessage("Letter '" + argument + "' won the voting.");
         break;
 
     case NEXT_TOUR:
-       qDebug() << "NEXT TOUR ";
        this->resetKeyboard();
 
        //remove active class from all letter buttons
@@ -289,7 +291,6 @@ void MainWindow::processMessage(int command, QString argument){
         break;
 
     case SEND_ALPHABET:
-        qDebug() << "Alphabet: " << argument;
         this->processAlphabet(argument);
         break;
 
@@ -299,6 +300,9 @@ void MainWindow::processMessage(int command, QString argument){
         break;
     case LIST_OF_PLAYERS:
         this->showListOfPlayers(argument);
+        break;
+    case WINNER:
+        this->logMessage(argument);
         break;
 
     default:
@@ -361,9 +365,6 @@ void MainWindow::processAlphabet(QString data){
         float tmp = pieces[i].toFloat();
         colors[i] = tmp;
         if (tmp > 0){
-
-
-
             if(tmp > max){
                 max = tmp;
             }
@@ -381,7 +382,6 @@ void MainWindow::processAlphabet(QString data){
         QPushButton* button = ui->letter_buttons_container->findChild<QPushButton*>(buttonName+buttonLetter);
 
         if(colors[i] > 0){
-
             //stylesheet += QString::number();
             float color = 200 - (colors[i]/max) * 80;
             int iColor = (int)color;
@@ -426,7 +426,6 @@ void MainWindow::passwordGuess(){
     this->isKeyboardBlocked = true;
     this->ui->lineEdit_password_guess->setText("");
     this->writeData(PASSWORD_GUESS, password);
-    qDebug() << password;
 }
 
 void MainWindow::logMessage(QString message){
@@ -441,6 +440,37 @@ void MainWindow::showListOfPlayers(QString names){
     qDebug() << pieces;
     this->ui->playerList->clear();
     this->ui->playerList->addItems(pieces);
+
+}
+
+bool MainWindow::readConfigFile(const char* filename){
+    string address, port, dummyLine;
+
+       ifstream myfile (filename);
+       if (myfile.is_open())
+       {
+           try{
+               getline (myfile,dummyLine); //skip first line
+               getline (myfile,address);
+               this->address = QString::fromStdString(address);
+               getline (myfile,port);
+               this->port = QString::fromStdString(port);
+               myfile.close();
+
+               qDebug() << "address: " <<this->address << " port: " << this->port;
+
+               if(this->address.length() < 1 || this->port.length() < 1){
+                   return false;
+               }
+
+               return true;
+
+           }catch(int e){
+               return false;
+           };
+       }
+       else
+           return false;
 
 }
 
